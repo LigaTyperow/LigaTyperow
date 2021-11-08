@@ -1,0 +1,28 @@
+.scoreBoard{
+    margin-top: 2rem;
+}
+
+.scoreBoardHeader{
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.scoreBoard h4:nth-of-type(2n){
+    margin-top: 1rem;
+}
+
+.finishedMatchesList {
+    max-height: 200px;
+    max-width: 30%;
+    overflow-y: scroll;
+    background-color: bisque;
+    border: 1px solid black;
+}
+
+.UpcomingMatchesList {
+    max-height: 200px;
+    max-width: 30%;
+    overflow-y: scroll;
+    background-color: bisque;
+    border: 1px solid black;
+}
