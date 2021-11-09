@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (match.status === "SCHEDULED") {
                 const UpcomingMatchesList = document.getElementById('UpcomingMatchesList');
-                const singleMatch = createDOMElement('li','list-group-item', `${match.awayTeam.name} VS ${match.homeTeam.name} (${match.score.fullTime.awayTeam}:${match.score.fullTime.homeTeam})`);
+                const singleMatch = createDOMElement('li','list-group-item', `${match.awayTeam.name} VS ${match.homeTeam.name}`);
                 UpcomingMatchesList.appendChild(listOfUpcomingMatches);
                 listOfUpcomingMatches.appendChild(singleMatch);
             }
