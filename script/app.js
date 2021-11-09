@@ -2,13 +2,38 @@ import {
     getData
 } from "../script/apiRequest.js";
 import {
-    createDOMElement
+    createDOMElement,
+    mapListToDOMElements
 } from "../script/DOMActions.js"
 
-
+let viewElems = {};
+let leagueNameButtons = {};
+let leagueName="";
 document.addEventListener("DOMContentLoaded", () => {
+  
 
-    getData().then(resp => {
+    connectDOMElements();
+
+    Object.keys(leagueNameButtons).forEach(leagueName => {
+        leagueNameButtons[leagueName].addEventListener("click", setCurrentNameFilter);
+    })
+
+    
+})
+
+const connectDOMElements = () => {
+    const listOfIds = Array.from(document.querySelectorAll('[id]')).map(elem => elem.id);
+    const listOfLeagueNames = Array.from(document.querySelectorAll('[data-league-id]')).map(elem => elem.dataset.leagueId);
+
+    viewElems = mapListToDOMElements(listOfIds, 'id');
+    leagueNameButtons = mapListToDOMElements(listOfLeagueNames, 'data-league-id');
+}
+
+const fetchAndDisplayShows = ()=>{
+    viewElems.finishedMatchesList.innerHTML="";
+    viewElems.UpcomingMatchesList.innerHTML="";
+    getData(leagueName).then(resp => {
+        //document.getElementById('matchday').innerText = resp.filters.dateFrom;
         const fullSeasonMatches = resp.matches;
         console.log(fullSeasonMatches);
         const listOfFinishedMatches = createDOMElement('ul', 'list-group');
@@ -29,11 +54,15 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // document.getElementById('matchday').innerText = resp.filters.dateFrom;
         // const fullScoreboard = resp.matches;
         // fullScoreboard.forEach(match => {
         //     console.log(`${match.homeTeam.name} VS ${match.awayTeam.name}`);
         // });
 
     })
-})
+}
+
+const setCurrentNameFilter = () => {
+    leagueName = event.target.dataset.leagueId;
+    fetchAndDisplayShows();
+}
