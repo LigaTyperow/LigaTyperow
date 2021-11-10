@@ -39,16 +39,17 @@ const fetchAndDisplayShows = ()=>{
         const listOfFinishedMatches = createDOMElement('ul', 'list-group');
         const listOfUpcomingMatches = createDOMElement('ul', 'list-group');
         fullSeasonMatches.forEach(match => {
+            const dayOfMatch = match.utcDate.slice(0,10);
             if (match.status === "FINISHED") {
                 const finishedMatchesList = document.getElementById('finishedMatchesList');
-                const singleMatch = createDOMElement('li','list-group-item', `${match.awayTeam.name} VS ${match.homeTeam.name} (${match.score.fullTime.awayTeam}:${match.score.fullTime.homeTeam})`);
+                const singleMatch = createDOMElement('li','list-group-item', `${dayOfMatch} | ${match.awayTeam.name} VS ${match.homeTeam.name} (${match.score.fullTime.awayTeam}:${match.score.fullTime.homeTeam})`);
                 finishedMatchesList.appendChild(listOfFinishedMatches);
                 listOfFinishedMatches.appendChild(singleMatch);
             }
             
             if (match.status === "SCHEDULED") {
                 const UpcomingMatchesList = document.getElementById('UpcomingMatchesList');
-                const singleMatch = createDOMElement('li','list-group-item', `${match.awayTeam.name} VS ${match.homeTeam.name}`);
+                const singleMatch = createDOMElement('li','list-group-item', `${dayOfMatch} | ${match.awayTeam.name} VS ${match.homeTeam.name} `);
                 UpcomingMatchesList.appendChild(listOfUpcomingMatches);
                 listOfUpcomingMatches.appendChild(singleMatch);
             }
