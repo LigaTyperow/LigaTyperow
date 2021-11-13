@@ -68,16 +68,18 @@ const fetchAndDisplayData = () => {
                 const tr = createDOMElement('tr');
                 const th = createDOMElement('th', "", row.position);
                 th.scope = "row";
-                const teamCrest= createDOMElement('img', "teamCrest", null, row.team.crestUrl);
+                const teamCrestImg = createDOMElement('img', "teamCrest", null, row.team.crestUrl);
+                const teamCrest = createDOMElement('td', "teamCrest");
                 const teamName = createDOMElement('td', "", row.team.name);
                 const matchesPlayed = createDOMElement('td', "", row.playedGames);
                 const pointEarned = createDOMElement('td', "", row.points);
-                const wins = createDOMElement('td', "", row.won);
-                const draws = createDOMElement('td', "", row.draw);
-                const loses = createDOMElement('td', "", row.lost);
+                const wins = createDOMElement('td', "", `${row.won}`);
+                const draws = createDOMElement('td', "", `${row.draw}`);
+                const loses = createDOMElement('td', "", `${row.lost}`);
 
-
+                teamCrest.appendChild(teamCrestImg);
                 tableBody.appendChild(tr);
+
                 tr.appendChild(th);
                 tr.appendChild(teamCrest);
                 tr.appendChild(teamName);
@@ -87,7 +89,6 @@ const fetchAndDisplayData = () => {
                 tr.appendChild(draws);
                 tr.appendChild(loses);
             })
-
         })
     })
 

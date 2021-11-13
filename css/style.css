@@ -32,7 +32,7 @@ body {
 }
 
 .table {
-    width: 40%;
+    width: 45%;
     margin-top: 1rem;
     -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
     -moz-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
@@ -48,7 +48,7 @@ body {
 }
 
 .teamCrest {
-    height: 40px;
+    height: 35px;
     width: 40px;
 }
 
