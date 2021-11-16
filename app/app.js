@@ -27,7 +27,7 @@ app.set('views', path.join(__dirname + '/../views')); //i trzeba wskazac folder 
 app.use(ejsLayouts);
 app.set('layout', 'layouts/main');
 
-// public folder - dodanie css
+// public folder - CSS, JavaScript
 app.use(express.static('public'));
 
 //body parser // application/x-www-form-urlencoded

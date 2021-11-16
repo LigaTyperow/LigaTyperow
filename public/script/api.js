@@ -1,13 +1,13 @@
 import {
     getDataForShedule,
     getDataForTable
-} from "../script/apiRequest.js";
+} from "./apiRequest.js";
 import {
     createDOMElement,
     mapListToDOMElements
-} from "../script/DOMActions.js"
+} from "./DOMActions.js";
 
-const personalToken = "06900aadf8064cdab4775b8b1c19db88";
+// const personalToken = "06900aadf8064cdab4775b8b1c19db88";
 let viewElems = {}; //elementy DOM. Kluczem jest id elementu, a zawartoscia faktyczny element 
 let leagueNameButtons = {}; // Przyciski do zmiany ligi
 let leagueName = ""; //Aktualnie wybrana liga
@@ -54,7 +54,7 @@ const fetchAndDisplayData = () => {
             }
 
         });
-
+        
         getDataForTable(leagueName).then(resp => {
             const standingsTable = resp.standings[0].table;
             console.log(standingsTable);
@@ -112,3 +112,66 @@ const switchLeagueName = () => {
         document.getElementById('leagueName').innerText = ""
     }
 }
+
+// //DOMActions
+// const _getDOMElem = (attribute, value) => {
+//     return document.querySelector(`[${attribute} = "${value}"]`);
+// }
+
+// //DOMActions
+// const createDOMElement = (tagName, className, innerText, src) => {
+//     const tag = document.createElement(tagName);
+//     tag.classList = className;
+
+//     if (innerText) {
+//         tag.innerText = innerText;
+//     }
+
+//     if (src) {
+//         tag.src = src;
+//     }
+//     return tag;
+// }
+
+// //DOMActions
+// const mapListToDOMElements = (listOfValues, attribute) => { //
+//     const _viewElems = {};
+  
+//     for (const value of listOfValues) {
+//       _viewElems[value] = _getDOMElem(attribute, value);
+//     }
+  
+//     return _viewElems;
+// }
+
+// // const personalToken = "06900aadf8064cdab4775b8b1c19db88"
+// // const url = "https://api.football-data.org/v2/matches"
+// // const url = "https://api.football-data.org/v2/competitions/PL/matches"
+// // const url = "http://api.football-data.org/v2/teams/18"
+// // const url = "http://api.football-data.org/v2/competitions/2021/standings"
+
+// //apiRequest
+// const getDataForShedule = leagueName => {
+//     return fetch(`https://api.football-data.org/v2/competitions/${leagueName}/matches`, {
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'X-Auth-Token': personalToken
+//     }}).then(resp => resp.json())
+//     .catch((error) => {
+//         alert("Wystąpił problem z danymi")
+//         console.error('Error:', error);
+//     });
+// }
+
+// //apiRequest
+// const getDataForTable = leagueName => {
+//     return fetch(`http://api.football-data.org/v2/competitions/${leagueName}/standings`, {
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'X-Auth-Token': personalToken
+//     }}).then(resp => resp.json())
+//     .catch((error) => {
+//         alert("Wystąpił problem z danymi")
+//         console.error('Error:', error);
+//     });
+// }

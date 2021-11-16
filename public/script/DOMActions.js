@@ -24,4 +24,4 @@ export const mapListToDOMElements = (listOfValues, attribute) => { //
     }
   
     return _viewElems;
-  }
+}
