@@ -13,10 +13,10 @@ module.exports = {
         return re.test(password);
     },
     
-    checkDuration(duration) {
-        const re = /^[0-9\-]+$/;
-        return re.test(duration);
-    },
+    // checkDuration(duration) {
+    //     const re = /^[0-9\-]+$/;
+    //     return re.test(duration);
+    // },
 
     checkScore(score) {
         const re = /^[0-9\:]+$/;

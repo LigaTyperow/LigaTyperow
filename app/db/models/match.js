@@ -6,14 +6,32 @@ const Schema = mongoose.Schema; //pobieramy Schema
 // const { } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
 
 //Stworzenie modelu, na podstawie, którego powstanie kolekcja
-const matchSchema = new Schema({      
+const matchSchema = new Schema({
+    leagueName: {
+        type: String,
+    },
+    date: {
+        type: String,
+    },
+    awayTeam: {
+        type: String,
+    },
+    homeTeam: {
+        type: String,
+    },
+    scoreHomeTeam: {
+        type: String,
+    },
+    scoreAwayTeam: {
+        type: String,
+    },
     //referencje
-    gameweek: {
-        //odwołanie do API
-    },
-    match: {
-        //odwołanie do API        
-    },
+    // gameweek: {
+    //     //odwołanie do API
+    // },
+    // match: {
+    //     //odwołanie do API        
+    // },
 });
 //##############################################################
 //Operacje po wpisaniu danych przez usera, na których możemy dokonać zmiany przed dodaniem do bd

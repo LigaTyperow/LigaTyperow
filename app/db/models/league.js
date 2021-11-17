@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose'); //pobieramy mongoose
 const Schema = mongoose.Schema; //pobieramy Schema
-const { checkDuration } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
+// const { checkDuration } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
 
 //Stworzenie modelu, na podstawie, którego powstanie kolekcja
 const leagueSchema = new Schema({
@@ -13,13 +13,26 @@ const leagueSchema = new Schema({
         maxLength: [30, 'Maksymalna liczba znaków to 30!'],
         unique: true,
     },
+    slug: {
+        type: String,
+        trim: true,
+        lowercase: true,
+    },
     description: {
         type: String,
+        maxLength: [50, 'Maksymalna liczba znaków to 50!'],
+    },
+    playersCount: {
+        type: Number,
+        required: [true, 'Liczba graczy jest wymagana!'],
+        min: [1, 'Najmniejsza liczba graczy to 1!'],
+        max: [0, 'Największa liczba graczy to 0!'],
+        default: 1,
     },
     privacy: {
         type: String,
         required: [true, 'Pole prywatności jest wymagane!'],
-        lowercase: true,  
+        lowercase: true,
         enum: {
             values: ['publiczna', 'prywatna'],
             message: 'Niepoprawne pole prywatności! Proszę wybrać: publiczna lub prywatna.'
@@ -30,15 +43,15 @@ const leagueSchema = new Schema({
         required: [true, 'Kod do ligi jest wymagany!'],
         minLength: [3, 'Minimalna liczba znaków to 3!'],
         maxLength: [30, 'Maksymalna liczba znaków to 30!'],
-        lowercase: true, 
+        lowercase: true,
         trim: true,
         unique: true,
     },
-    duration: {
-        type: String,
-        required: [true, 'Długość trwania ligi jest wymagana!'],
-        validate: [checkDuration, 'Proszę wprowadzić termin zakończenia trwania ligi w formacie YYYY-MM-DD!'],
-    },
+    // duration: {
+    //     type: String,
+    //     required: [true, 'Długość trwania ligi jest wymagana!'],
+    //     validate: [checkDuration, 'Proszę wprowadzić termin zakończenia trwania ligi w formacie YYYY-MM-DD!'],
+    // },
     //referencja do użytkownika
     user: {
         type: mongoose.Types.ObjectId,
@@ -49,13 +62,30 @@ const leagueSchema = new Schema({
 //##############################################################
 //Operacje po wpisaniu danych przez usera, na których możemy dokonać zmiany przed dodaniem do bd
 
+//przypisanie name do slug
+leagueSchema.pre('save', function (next) {
+    const league = this;
+    //jeśli liga nie jest dodawana/modyfikowana to nic nie rób, a jeśli tak to przypisz nazwe ligi do slug
+    if (!league.isModified('name')) {
+        return next();
+    } else {
+        //slug nie może mieć spacji
+        league.slug = league.name.replace(/\s+/g, '');
+        next();
+    }
+});
+
 //API: Schema.prototype.post() - uruchamia się po zapisie
-leagueSchema.post('save', function(error, doc, next) {
+leagueSchema.post('save', function (error, doc, next) {
     if (error.code === 11000) {
         //1100 to kod błędu dla pola "unique"
         error.errors = {
-            name: { message: 'Ta nazwa ligi jest już zajęta!'},
-            code: { message: 'Ten kod ligi jest już zajęty!'},
+            name: {
+                message: 'Ta nazwa ligi jest już zajęta!'
+            },
+            code: {
+                message: 'Ten kod ligi jest już zajęty!'
+            },
         };
     }
     next(error);
@@ -72,7 +102,7 @@ async function saveLeague() {
         name: 'Liga angielska',
         privacy: 'publiczna',
         code: 'liga123',
-        duration: '2021-10-26',
+        // duration: '2021-10-26',
     });
 
     try {
