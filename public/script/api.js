@@ -34,7 +34,7 @@ const fetchAndDisplayData = () => {
     tableBody.innerHTML = ""
 
     getDataForShedule(leagueName).then(resp => {
-        // console.log(resp);
+        console.log(resp);
         switchLeagueName();
         const fullSeasonMatches = resp.matches;
         const listOfFinishedMatches = createDOMElement('ul', 'list-group');

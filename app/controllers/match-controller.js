@@ -15,7 +15,7 @@ class MatchController {
         //x-www-form-urlencoded - dodawanie danych przez formularz
         //raw - w czystej postaci        
 
-        //console.log(req.body.leagueName); //req.body to przekazywany obiekt
+        console.log(req.body); //req.body to przekazywany obiekt
         const matches = req.body.matches; //tablica obiektów - mecze
         const leagueName = req.body.leagueName; //jedna wartość - nazwa ligi
 
