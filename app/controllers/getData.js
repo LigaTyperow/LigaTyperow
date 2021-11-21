@@ -18,20 +18,20 @@ async function getData(name) {
             headers: headers
         }).then(resp => resp.data.currentSeason.currentMatchday)
 
-        // console.log(`${name}: ${currentMatchday}`);
-
-        const matchData = await axios.get(`https://api.football-data.org/v2/competitions/${name}/matches?matchday=${currentMatchday}`, {
+        const matches = await axios.get(`https://api.football-data.org/v2/competitions/${name}/matches?matchday=${currentMatchday}`, {
             headers: headers
         }).then(resp => resp.data.matches)
-        //     {
-        //     console.log(resp.data);
-        //     const matches = resp.data.matches; //mecze w danej kolejce
-        //     const leagueName = resp.data.competition.name; //nazwa ligi
-        // })
+
+        let leagueName=""
+        if(name ==="PL") leagueName = "Premier League"
+        else if(name ==="BL1")leagueName = "Bundesliga"
+        else if(name ==="SA")leagueName = "Serie A"
+        else if(name ==="PD")leagueName = "Liga Santander"
+        else leagueName=""
 
         await axios.post('http://localhost:80/api/matches', {
-            matchData,
-            name
+            matches,
+            leagueName
         })
     } catch (error) {
         console.error(error);
