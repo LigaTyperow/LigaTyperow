@@ -15,18 +15,45 @@ class MatchController {
         //x-www-form-urlencoded - dodawanie danych przez formularz
         //raw - w czystej postaci        
 
-        console.log(req.body); //req.body to przekazywany obiekt
-        const matches = req.body.matches; //tablica obiektów - mecze
+        // console.log(req.body); //req.body to przekazywany obiekt
+        const finishedMatches = req.body.finishedMatches; //tablica obiektów - ukończone mecze
+        const upcomingMatches = req.body.upcomingMatches; //tablica obiektów - nadchodzące mecze
         const leagueName = req.body.leagueName; //jedna wartość - nazwa ligi
 
-        matches.forEach(match => {
+        finishedMatches.forEach(match => {
             const matchObject = new Match({
                 leagueName: leagueName, 
                 date: match.utcDate.slice(0, 10),
+                gameweek: match.matchday,
                 awayTeam: match.awayTeam.name,
                 homeTeam: match.homeTeam.name,
                 scoreHomeTeam: match.score.fullTime.homeTeam,
                 scoreAwayTeam: match.score.fullTime.awayTeam,
+                status: match.status,
+            });
+
+            try {
+                //console.log(matchObject); 
+                matchObject.save();
+                res.status(201); //dokument został utworzony
+            } catch (e) {
+                console.log('error');
+                res.status(422).json({
+                    errors: e.errors
+                }); //coś jest niepoprawnego i informacje
+            }
+        });
+
+        upcomingMatches.forEach(match => {
+            const matchObject = new Match({
+                leagueName: leagueName, 
+                date: match.utcDate.slice(0, 10),
+                gameweek: match.matchday,
+                awayTeam: match.awayTeam.name,
+                homeTeam: match.homeTeam.name,
+                scoreHomeTeam: match.score.fullTime.homeTeam,
+                scoreAwayTeam: match.score.fullTime.awayTeam,
+                status: match.status,
             });
 
             try {

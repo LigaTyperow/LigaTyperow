@@ -1,6 +1,7 @@
 //Pobieranie danych GET z API i POST jako obiekt do kontrolera
 
 const axios = require('axios');
+const Match = require('../db/models/match.js');
 
 // W razie czego
 const headers = {
@@ -14,11 +15,20 @@ const leagueNames = ["PL", "BL1", "SA", "PD"] // skróty nazw lig to pobierania 
 
 async function getData(name) {
     try {
+        //pobieramy cyfrę aktualnej kolejki ligi
         const currentMatchday = await axios.get(`http://api.football-data.org/v2/competitions/${name}`, {
             headers: headers
         }).then(resp => resp.data.currentSeason.currentMatchday)
 
-        const matches = await axios.get(`https://api.football-data.org/v2/competitions/${name}/matches?matchday=${currentMatchday}`, {
+        //pobieramy mecze z ostatniej kolejki
+        const finishedMatches = await axios.get(`https://api.football-data.org/v2/competitions/${name}/matches?matchday=${currentMatchday}`, {
+            headers: headers
+        }).then(resp => resp.data.matches)
+
+        const upcomingMatchday = parseInt(currentMatchday) + 1;
+
+        //pobieramy mecze z następnej kolejki
+        const upcomingMatches = await axios.get(`https://api.football-data.org/v2/competitions/${name}/matches?matchday=${upcomingMatchday}`, {
             headers: headers
         }).then(resp => resp.data.matches)
 
@@ -29,14 +39,29 @@ async function getData(name) {
         else if(name ==="PD")leagueName = "Liga Santander"
         else leagueName=""
 
-        await axios.post('http://localhost:80/api/matches', {
-            matches,
-            leagueName
-        })
+        //pobieranie w petli currentMatchday kazdej ligi
+        // sprawdzamy czy currentMatchday jest taki sam jak w request
+        // if jest taki sam to nie robimy requesta
+        // else (jeslie nie jest taki sam) to robimy requesta i replace i post
+
+        //wczytujemy dane z bd
+        // const bd_nazwa = await Match.find({ leagueName: leagueName, gameweek: currentMatchday });
+            // const bd_nazwa = await Match.find(  )
+            // console.log(bd_nazwa);
+
+        //warunek do ogarniecia        
+        if (true) {
+            await axios.post('http://localhost:80/api/matches', {            
+                finishedMatches,
+                leagueName,
+                upcomingMatches
+            })            
+        }
     } catch (error) {
         console.error(error);
     }
 }
+
 leagueNames.forEach(name => {
     getData(name)
 })

@@ -13,6 +13,9 @@ const matchSchema = new Schema({
     date: {
         type: String,
     },
+    gameweek: {
+        type: String,
+    },
     awayTeam: {
         type: String,
     },
@@ -20,11 +23,14 @@ const matchSchema = new Schema({
         type: String,
     },
     scoreHomeTeam: {
-        type: String,
+        type: Number,
     },
     scoreAwayTeam: {
+        type: Number,
+    },    
+    status: {
         type: String,
-    },
+    },    
     //referencje
     // gameweek: {
     //     //odwołanie do API
