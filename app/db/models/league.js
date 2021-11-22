@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose'); //pobieramy mongoose
 const Schema = mongoose.Schema; //pobieramy Schema
+const uniqueValidator = require('mongoose-unique-validator'); //lib do walidacji unique
 // const { checkDuration } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
 
 //Stworzenie modelu, na podstawie, którego powstanie kolekcja
@@ -26,7 +27,7 @@ const leagueSchema = new Schema({
         type: Number,
         required: [true, 'Liczba graczy jest wymagana!'],
         min: [1, 'Najmniejsza liczba graczy to 1!'],
-        max: [0, 'Największa liczba graczy to 0!'],
+        max: [20, 'Największa liczba graczy to 20!'],
         default: 1,
     },
     privacy: {
@@ -35,7 +36,7 @@ const leagueSchema = new Schema({
         lowercase: true,
         enum: {
             values: ['publiczna', 'prywatna'],
-            message: 'Niepoprawne pole prywatności! Proszę wybrać: publiczna lub prywatna.'
+            message: 'Błąd! Proszę wybrać: publiczna lub prywatna.'
         },
     },
     code: {
@@ -52,11 +53,11 @@ const leagueSchema = new Schema({
     //     required: [true, 'Długość trwania ligi jest wymagana!'],
     //     validate: [checkDuration, 'Proszę wprowadzić termin zakończenia trwania ligi w formacie YYYY-MM-DD!'],
     // },
-    //referencja do użytkownika
+    //referencja do użytkownika - przy tworzeniu ligi przypisujemy ją do usera
     user: {
         type: mongoose.Types.ObjectId,
-        // required: true,
-        ref: 'User' //potem w konkretnym controlerze użyjemy tego pola, np żeby zobaczyć w lidze usera
+        required: true,
+        ref: 'User' 
     },
 });
 //##############################################################
@@ -75,21 +76,8 @@ leagueSchema.pre('save', function (next) {
     }
 });
 
-//API: Schema.prototype.post() - uruchamia się po zapisie
-leagueSchema.post('save', function (error, doc, next) {
-    if (error.code === 11000) {
-        //1100 to kod błędu dla pola "unique"
-        error.errors = {
-            name: {
-                message: 'Ta nazwa ligi jest już zajęta!'
-            },
-            code: {
-                message: 'Ten kod ligi jest już zajęty!'
-            },
-        };
-    }
-    next(error);
-});
+//Sprawdzanie unikalności nazwy i kodu
+leagueSchema.plugin(uniqueValidator, { message: 'Ten {PATH} już istnieje!' });
 
 const League = mongoose.model('League', leagueSchema);
 

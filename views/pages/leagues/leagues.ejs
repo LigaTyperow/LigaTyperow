@@ -1,0 +1,42 @@
+<div class="container">
+    <div class="card card-body">
+        <h1 class="text-center">Lista lig:</h1>
+
+    <% if (user) { %>
+    <a href="/zalogowany/ligi/dodaj" class="btn btn-success mb-3">Dodaj nową ligę!</a>
+    <% } %>
+
+    <!-- Aby sort nie gryzł się z query w slug to trzeba to zrobić w jednym formularzu -->
+    <form method="GET">
+        <%- include('partials/search') %>
+
+        <div class="row">
+            <div class="col-3">
+                <%- include('partials/filters') %>
+            </div>
+            <div class="col-9">
+                <!-- Wylistowanie istniejących lig -->
+                <% leagues.forEach(league => { %>
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <p class="h3 mb-3"><%= league.name %></p>
+                        <p>Graczy: <%= league.playersCount %></p>
+                        <!-- .? - sprawdzenie czy do ligi jest przypisany user -->
+                        <p>Liga gracza: <%= league.user?.nick %></p>
+                        <a href="/ligi/<%= league.slug %>" class="btn btn-primary">Zobacz</a>
+                        <!-- Jeśli user jest zalogowany -->
+                        <% if (user) { %>
+                        <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
+                        <a href="/zalogowany/ligi/<%= league.slug %>/usun"
+                            onclick="return confirm('Czy jesteś pewien?')" class="btn btn-danger">Usuń</a>
+                        <% } %>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <%- include('partials/pagination') %>
+    </form>        
+    </div>    
+</div>

@@ -36,10 +36,12 @@
           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Ligi
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Zobacz ligi</a></li>
-            <li><a class="dropdown-item" href="#">Dodaj ligę</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">            
+            <li><a class="dropdown-item" href="/ligi">Zobacz ligi</a></li>
+            <% if (user) { %>
+            <li><a class="dropdown-item" href="/zalogowany/ligi/dodaj">Dodaj ligę</a></li>
             <li><a class="dropdown-item" href="#">Dołącz do ligi</a></li>
+            <% } %>
           </ul>
         </li>
         <li class="nav-item">

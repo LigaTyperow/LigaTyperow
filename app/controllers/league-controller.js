@@ -1,205 +1,159 @@
-// const League = require('../db/models/league');
+const League = require('../db/models/league');
 
-// class LeagueController {
+class LeagueController {
 
-//     async showLeagues(req, res) {
-//         /* q=searchBar
-//            sort=sortowanie
-//            counts=filtrowanie */
-//         const { q, sort, countmin, countmax } = req.query; //wyciągamy wartość ze sluga
-//         const page = req.query.page || 1; //jeśli nie podałem strony to aktualnie jest strona 1wsza
-//         const perPage = 2; //ile wyników na per strone chce wyswietlic
+    async showLeagues(req, res) {
+        /* q=searchBar
+           sort=sortowanie
+           counts=filtrowanie */
+        const { q, sort, countmin, countmax } = req.query; //pobieramy wartość ze sluga
+        const page = req.query.page || 1; //jeśli nie podaliśmy strony to aktualnie jest strona pierwsza
+        const perPage = 2; //ile wyników na per strone chce wyswietlic
 
-//         // SZUKANIE ##########################################
-//         const where = {};
-//         // https://docs.mongodb.com/manual/reference/operator/query/regex/
-//         if (q) {
-//             where.name = { $regex: q , $options: 'i' }; //wyrażenie regularne, "i" nierozróżnia wielkości liter
-//         } 
+        // SZUKANIE ##########################################
+        const where = {};
+        // https://docs.mongodb.com/manual/reference/operator/query/regex/
+        if (q) {
+            where.name = { $regex: q , $options: 'i' }; //wyrażenie regularne, "i" nierozróżnia wielkości liter
+        } 
         
-//         // FILTROWANIE ##########################################
-//         // https://docs.mongodb.com/manual/reference/operator/aggregation/
-//         if (countmin || countmax) {
-//             where.playersCount = {}; //jeśli została podana wartość to tworzę obiekt
-//             if (countmin) where.playersCount.$gte = countmin; //gt=greater than, gte=większe lub równe
-//             if (countmax) where.playersCount.$lte = countmax; //lte=mniejsze lub równe
-//         }
+        // FILTROWANIE ##########################################
+        // https://docs.mongodb.com/manual/reference/operator/aggregation/
+        if (countmin || countmax) {
+            where.playersCount = {}; //jeśli została podana wartość to tworzę obiekt
+            if (countmin) where.playersCount.$gte = countmin; //gt=greater than, gte=większe lub równe
+            if (countmax) where.playersCount.$lte = countmax; //lte=mniejsze lub równe
+        }
 
-//         let query = League.find(where); //bez await, bo nie chce od razu szukać  
+        let query = League.find(where); //bez await, bo nie chce od razu szukać  
         
 
-//         // PAGINACJA ##########################################\
-//         query = query.skip((page - 1) * perPage);   //od ktorego miejsca ma pobrac reszte wyników
-//         query = query.limit(perPage);   //limit ile wyników na 1dną strone potrzebujesz
+        // PAGINACJA ##########################################
+        query = query.skip((page - 1) * perPage);   //od ktorego miejsca ma pobrac reszte wyników
+        query = query.limit(perPage);   //limit ile wyników na jedną strone potrzebujesz
 
-//         // SORTOWANIE ##########################################
-//         if (sort) {
-//             //dzielimy parametr sort
-//             const s = sort.split('|');
+        // SORTOWANIE ##########################################
+        if (sort) {
+            //dzielimy parametr sort
+            const s = sort.split('|');
 
-//             //funckcja mongoDB
-//             //asc - rosnąco, desc - malejąco
-//             //np name|asc to 0=name, a 1=asc
-//             query = query.sort({ [s[0]]: s[1] });
-//         }
+            //funckcja mongoDB
+            //asc - rosnąco, desc - malejąco
+            //np name|asc to 0=name, a 1=asc
+            query = query.sort({ [s[0]]: s[1] });
+        }
 
-//         //uruchamiam moje query - z użytymi parametrami
-//         const leagues = await query.populate('user').exec(); //populate - wypełnij pole user
+        //uruchamiam moje query - z użytymi parametrami
+        const leagues = await query.populate('user').exec(); //populate - wypełnij pole user
         
-//         const resultsCount = await League.find(where).count(); //ilość wszystkich firm
-//         const pagesCount = Math.ceil(resultsCount / perPage); // zaokrągla liczbe ilości stron
+        const resultsCount = await League.find(where).count(); //ilość wszystkich lig
+        const pagesCount = Math.ceil(resultsCount / perPage); //zaokrągla liczbe ilości stron
 
-//         // Przekazujemy wartości
-//         res.render('pages/companies/companies', {
-//             companies: leagues,
-//             page,   //która aktualnie jest strona
-//             pagesCount, 
-//             resultsCount    
-//         });
-//     }
+        // Przekazujemy wartości i wyświetlamy strone z ligami
+        res.render('pages/leagues/leagues', {
+            title: 'Ligi',
+            leagues: leagues, //zamiast tego zapisu można po prostu napisać "leagues"
+            page,   //która aktualnie jest strona
+            pagesCount, 
+            resultsCount    
+        });
+    }
 
-//     async showCompany(req, res) {
-//         const { name } = req.params;        
+    async showLeague(req, res) {
+        const { name } = req.params;        
     
-//         //wczytujemy dane z bd
-//         const company = await League.findOne({ slug: name });
+        //wczytujemy dane z bd
+        const league = await League.findOne({ slug: name });
     
-//         //Widok company.ejs, { parametry, które chcesz przesłać }
-//         res.render('pages/companies/company', { 
-//             name: company?.name,
-//             title: company?.name ?? 'Brak wyników'  //Wyświetl nazwe firmy lub gdy taka nie istnieje to "brak"
-//         });
-//     }
+        //Widok league.ejs, { parametry, które chcemy przesłać }
+        res.render('pages/leagues/league', { 
+            title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
+            name: league?.name,
+            description: league?.description,
+            playersCount: league?.playersCount,
+            privacy: league?.privacy,
+            code: league?.code,
+        });
+    }
 
-//     showCreateCompanyForm(req, res) {
-//         res.render('pages/companies/create');
-//     }
+    showCreateLeagueForm(req, res) {
+        res.render('pages/leagues/create');
+    }
 
-//     //musi być async, bo bedziemy łaczyc sie z bd
-//     async createCompany(req, res) {
-//         //zapisanie wpisanych danych do bd
-//         const company = new League({
-//             name: req.body.name,
-//             slug: req.body.slug,
-//             employeesCount: req.body.employeesCount || undefined, //if wil pusty input to też zostanie nadana wartość defaultowa, bez tego zostanie nadana wartość "null"
-//             user: req.session.user._id, //przy tworzeniu firmy, przypisz firme do usera
-//         });
+    //musi być async, bo bedziemy łaczyc sie z bazą danych
+    async createLeague(req, res) {
+        //zapisanie wpisanych danych do bd
+        const league = new League({
+            title: 'Tworzenie',
+            name: req.body.name,
+            description: req.body.description,
+            playersCount: req.body.playersCount || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
+            privacy: req.body.privacy,
+            code: req.body.code,
+            user: req.session.user._id, //przy tworzeniu ligi, przypisz lige do usera
+        });
 
-//         try {
-//             await company.save();
-//             res.redirect('/firmy');    //przekierowanie na jakis adres po zapisaniu            
-//         } catch (e) {
-//             //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
-//             res.render('pages/companies/create', {
-//                 errors: e.errors,
-//                 form: req.body //musimy przesłać dane z formularza
-//             });
-//         }
-//     }
+        try {
+            await league.save();
+            res.redirect('/ligi');    //przekierowanie na adres po zapisaniu (wyświetlenie lig)           
+        } catch (e) {
+            //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
+            res.render('pages/leagues/create', {
+                errors: e.errors,
+                form: req.body //musimy przesłać dane z formularza
+            });
+        }
+    }
 
-//     //Edit
-//     async showEditCompanyForm(req, res) {
-//         const { name } = req.params;
-//         const company = await League.findOne({ slug: name });
+    // EDYCJA
+    async showEditLeagueForm(req, res) {
+        const { name } = req.params;
+        const league = await League.findOne({ slug: name });
 
-//         //potrzebujemy dane firmy, więc przekazujemy je
-//         res.render('pages/companies/edit', {
-//             form: company //użyjemy tego samego formularza
-//         });
-//     }
+        //potrzebujemy dane ligi, więc przekazujemy je
+        res.render('pages/leagues/edit', {
+            title: 'Edycja',
+            form: league //użyjemy tego samego formularza
+        });
+    }
 
-//     //musi być async, bo bedziemy łaczyc sie z bd
-//     async editCompany(req, res) {
-//         //pobieramy firme
-//         const { name } = req.params;
-//         const company = await League.findOne({ slug: name });
+    //musi być async, bo bedziemy łaczyc sie z bd
+    async editLeague(req, res) {
+        //pobieramy firme
+        const { name } = req.params;
+        const league = await League.findOne({ slug: name });
 
-//         //podmieniamy pola w bd
-//         company.name = req.body.name;
-//         company.slug = req.body.slug;
-//         company.employeesCount = req.body.employeesCount;
-        
-//         // sprawdzenie czy dodawane jest nowe zdjęcie i czy zdjecie juz istnieje
-//         if (req.file.filename && company.image) {
-//             fs.unlinkSync('public/uploads/' + company.image); //wskazujemy zdjecie do usuniecia        
-//         }
-//         if (req.file.filename) {            
-//             company.image = req.file.filename;
-//         }
+        //podmieniamy pola w bd
+        league.name = req.body.name;
+        league.description = req.body.description;
+        league.playersCount = req.body.playersCount;    
+        league.privacy = req.body.privacy;    
+        league.code = req.body.code;    
+        // league.user = req.session.user._id,
 
-//         try {
-//             await company.save();
-//             res.redirect('/firmy');    //przekierowanie na jakis adres po zapisaniu            
-//         } catch (e) {
-//             //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
-//             res.render('pages/companies/edit', {
-//                 errors: e.errors,
-//                 form: req.body //musimy przesłać dane z formularza
-//             });
-//         }
-//     }
+        try {
+            await league.save();
+            res.redirect('/ligi');    //przekierowanie na jakis adres po zapisaniu            
+        } catch (e) {
+            console.log(e);
+            //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
+            res.render('pages/leagues/edit', {
+                errors: e.errors,
+                form: req.body //musimy przesłać dane z formularza
+            });
+        }
+    }
 
-//     async deleteCompany(req, res) {
-//         const { name } = req.params;
-//         const company = await League.findOne({ slug: name });
+    async deleteLeague(req, res) {
+        const { name } = req.params;
 
-//         try {
-//             //jeśli istnieje zdjecie to je usun
-//             if (company.image) {
-//                 fs.unlinkSync('public/uploads/' + company.image); //wskazujemy zdjecie do usuniecia        
-//             }
+        try {      
+            await League.deleteOne({ slug: name });
+            res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+        } catch (e) {
+            //błędy nieprzewidziane
+        }
+    }   
+}
 
-//             await League.deleteOne({ slug: name });
-//             res.redirect('/firmy');    //przekierowanie na jakis adres po zapisaniu  
-//         } catch (e) {
-            
-//         }
-//     }
-
-//     async deleteImage(req, res) {
-//         const { name } = req.params;
-//         const company = await League.findOne({ slug: name }); //pobieramy bieżącą firme
-
-//         try {
-//             fs.unlinkSync('public/uploads/' + company.image); //wskazujemy zdjecie do usuniecia
-//             company.image = ''; //zresetuje wartosc image, zeby byla pusta
-//             await company.save();
-
-//             res.redirect('/firmy');    //przekierowanie na jakis adres po zapisaniu  
-//         } catch (e) {
-            
-//         }
-//     }
-
-//     async getCSV (req, res) {
-//         //pola, które chce mieć w CSV, trzeba je zamienić z JSON na CSV dzięki lib json2csv
-//         // https://www.npmjs.com/package/json2csv
-//         const fields = [
-//             {
-//                 label: 'Nazwa',
-//                 value: 'name'
-//             },
-//             {
-//                 label: 'URL',
-//                 value: 'slug'
-//             },
-//             {
-//                 label: 'Liczba pracowników',
-//                 value: 'employeesCount'
-//             },
-//         ];
-
-//         const data = await League.find(); //wszystkie pobrane firmy
-//         const fileName = 'companies.csv'; //nazwa pliku
-
-//         const json2csv = new Parser({ fields }); 
-//         const csv = json2csv.parse(data); //parsujemy nasze dane do CSV
-
-//         //express
-//         res.header('Content-Type', 'text/csv'); //informujemy przeglądarke, że wysyłamy plik csv
-//         res.attachment(fileName);
-//         res.send(csv); //wysyłamy dane
-//     }
-// }
-
-// module.exports = new LeagueController();
+module.exports = new LeagueController();
