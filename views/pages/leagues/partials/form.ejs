@@ -1,84 +1,85 @@
 <!-- Formularz można użyć na kilku stronach. Po co go edytować w każdym miejscu, wystarczy raz -->
-
-<form method="POST" class="container">    
-    <div class="mb-3">
-        <label for="" class="form-label">Nazwa ligi *</label>
-        <!-- niżej: Dzięki value, po złym wypełnieniu pól, wartości z pól nie znikają -->
-        <input type="text" 
-            name="name"
-            maxlength="30"
-            value="<%= form.name %>" 
-            class="form-control <%- errors?.name ? 'is-invalid' : '' %>" required>   
-        <!-- sprawdzamy czy konkretny błąd tego pola istnieje, jeśli nie ma to wartość jest null i nie wchodzi do ifa -->
-        <% if (errors?.name) { %>  
-            <div class="invalid-feedback"><%= errors.name.message %></div>    
-        <% } %>
-    </div>    
-
-    <div class="mb-3">
-        <label for="" class="form-label">Opis</label>
-        <input type="text" 
-            name="description"
-            maxlength="50" 
-            value="<%= form.description %>"
-            class="form-control">
-        <div class="form-next">Maksymalnie 50 znaków.</div>
-        <% if (errors?.description) { %>  
-            <div class="invalid-feedback"><%= errors.description.message %></div>    
-        <% } %>
-    </div>
-
-    <div class="mb-3">
-        <label for="" class="form-label">Liczba graczy *</label>
-        <input type="number" 
-            name="playersCount" 
-            min="0" max="20"
-            value="<%= form.playersCount %>"
-            class="form-control <%- errors?.playersCount ? 'is-invalid' : '' %>" required>        
-        <% if (errors?.playersCount) { %>  
-            <div class="invalid-feedback"><%= errors.playersCount.message %></div>    
-        <% } %>
-    </div>
-
-    <div class="mb-3">
-        <label for="" class="form-label">Dostępność *</label>
-        <input type="text" 
-            name="privacy" 
-            value="<%= form.privacy %>"
-            class="form-control <%- errors?.privacy ? 'is-invalid' : '' %>" required>
-        <div class="form-next">Proszę wpisać publiczna lub prywatna</div>
-        <% if (errors?.privacy) { %>  
-            <div class="invalid-feedback"><%= errors.privacy.message %></div>    
-        <% } %>
-    </div>
-
-    <!-- Dodawanie kodu ligi będzie dostępne tylko podczas tworzenia ligi -->
+<div class="container">
+    <form method="POST">    
+        <div class="mb-3">
+            <label for="" class="form-label">Nazwa ligi *</label>
+            <!-- niżej: Dzięki value, po złym wypełnieniu pól, wartości z pól nie znikają -->
+            <input type="text" 
+                name="name"
+                maxlength="30"
+                value="<%= form.name %>" 
+                class="form-control <%- errors?.name ? 'is-invalid' : '' %>" required>   
+            <!-- sprawdzamy czy konkretny błąd tego pola istnieje, jeśli nie ma to wartość jest null i nie wchodzi do ifa -->
+            <% if (errors?.name) { %>  
+                <div class="invalid-feedback"><%= errors.name.message %></div>    
+            <% } %>
+        </div>    
     
         <div class="mb-3">
-            <label for="" class="form-label">Kod do ligi *</label>
+            <label for="" class="form-label">Opis</label>
             <input type="text" 
-                name="code" 
-                maxlength="30"
-                value="<%= form.code %>"
-                class="form-control <%- errors?.code ? 'is-invalid' : '' %>" required>
-            <% if (errors?.code) { %>  
-                <div class="invalid-feedback"><%= errors.code.message %></div>    
+                name="description"
+                maxlength="50" 
+                value="<%= form.description %>"
+                class="form-control">
+            <div class="form-next">Maksymalnie 50 znaków.</div>
+            <% if (errors?.description) { %>  
+                <div class="invalid-feedback"><%= errors.description.message %></div>    
             <% } %>
         </div>
     
-
-    <button class="btn btn-success"><%- buttonText %></button>
-</form>
-
-<!-- powinno być " typeof errors !== 'undefined' ", ale mamy zmienną zdefiniowaną w view-middleware -->
-<% if (errors) { %> 
-    <div class="alert alert-danger mt-3">
-        <!-- <ul>
-            <% for (const key in errors) { %>
-                <li><%= errors[key].message %></li>
+        <div class="mb-3">
+            <label for="" class="form-label">Liczba graczy *</label>
+            <input type="number" 
+                name="playersCount" 
+                min="0" max="20"
+                value="<%= form.playersCount %>"
+                class="form-control <%- errors?.playersCount ? 'is-invalid' : '' %>" required>        
+            <% if (errors?.playersCount) { %>  
+                <div class="invalid-feedback"><%= errors.playersCount.message %></div>    
             <% } %>
-        </ul> -->
-        <!-- Możesz tak jak wyżej wyświetlić ponownie błędy napisane pod formularzem, ale skoro będą napisane czy konkretnym polu to niżej napiszemy tylko informację -->
-        Popraw dane!
-    </div>
-<% } %>
+        </div>
+    
+        <div class="mb-3">
+            <label for="" class="form-label">Dostępność *</label>
+            <input type="text" 
+                name="privacy" 
+                value="<%= form.privacy %>"
+                class="form-control <%- errors?.privacy ? 'is-invalid' : '' %>" required>
+            <div class="form-next">Proszę wpisać publiczna lub prywatna</div>
+            <% if (errors?.privacy) { %>  
+                <div class="invalid-feedback"><%= errors.privacy.message %></div>    
+            <% } %>
+        </div>
+    
+        <!-- Dodawanie kodu ligi będzie dostępne tylko podczas tworzenia ligi -->
+        
+            <div class="mb-3">
+                <label for="" class="form-label">Kod do ligi *</label>
+                <input type="text" 
+                    name="code" 
+                    maxlength="30"
+                    value="<%= form.code %>"
+                    class="form-control <%- errors?.code ? 'is-invalid' : '' %>" required>
+                <% if (errors?.code) { %>  
+                    <div class="invalid-feedback"><%= errors.code.message %></div>    
+                <% } %>
+            </div>
+        
+    
+        <button class="btn btn-success"><%- buttonText %></button>
+    </form>
+    
+    <!-- powinno być " typeof errors !== 'undefined' ", ale mamy zmienną zdefiniowaną w view-middleware -->
+    <% if (errors) { %> 
+        <div class="alert alert-danger mt-3">
+            <!-- <ul>
+                <% for (const key in errors) { %>
+                    <li><%= errors[key].message %></li>
+                <% } %>
+            </ul> -->
+            <!-- Możesz tak jak wyżej wyświetlić ponownie błędy napisane pod formularzem, ale skoro będą napisane czy konkretnym polu to niżej napiszemy tylko informację -->
+            Popraw dane!
+        </div>
+    <% } %>
+</div>

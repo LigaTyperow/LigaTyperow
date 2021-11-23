@@ -44,8 +44,7 @@ class LeagueController {
         }
 
         //uruchamiam moje query - z użytymi parametrami
-        const leagues = await query.populate('user').exec(); //populate - wypełnij pole user
-        
+        const leagues = await query.populate('user').exec(); //populate - wypełnij pole user danymi jakimi chcesz a samym id       
         const resultsCount = await League.find(where).count(); //ilość wszystkich lig
         const pagesCount = Math.ceil(resultsCount / perPage); //zaokrągla liczbe ilości stron
 
@@ -129,7 +128,7 @@ class LeagueController {
         league.playersCount = req.body.playersCount;    
         league.privacy = req.body.privacy;    
         league.code = req.body.code;    
-        // league.user = req.session.user._id,
+        // league.user = req.session.user._id, //przypisz lige do usera
 
         try {
             await league.save();
