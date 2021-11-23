@@ -134,7 +134,6 @@ class LeagueController {
             await league.save();
             res.redirect('/ligi');    //przekierowanie na jakis adres po zapisaniu            
         } catch (e) {
-            console.log(e);
             //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
             res.render('pages/leagues/edit', {
                 errors: e.errors,

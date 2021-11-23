@@ -100,7 +100,6 @@ class UserController {
 
             res.redirect('/zalogowany/profil'); //wyświetla ponownie formularz
         } catch (e) {
-            console.log(e);
             res.render('pages/auth/profile', {   
                 title: 'Mój profil',             
                 errors: e.errors,
