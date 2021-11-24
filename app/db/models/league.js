@@ -53,12 +53,18 @@ const leagueSchema = new Schema({
     //     required: [true, 'Długość trwania ligi jest wymagana!'],
     //     validate: [checkDuration, 'Proszę wprowadzić termin zakończenia trwania ligi w formacie YYYY-MM-DD!'],
     // },
-    //referencja do użytkownika - przy tworzeniu ligi przypisujemy ją do usera
+    //referencja do użytkownika - przy tworzeniu ligi przypisujemy ją do usera      
     user: {
+        //Właściciel
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: 'User' 
+        ref: 'User'
     },
+    // dokument players może mieć wielu użytkowników, więc jest w tablicy (liga ma wielu graczy)
+    players: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'User'
+    }],
 });
 //##############################################################
 //Operacje po wpisaniu danych przez usera, na których możemy dokonać zmiany przed dodaniem do bd
@@ -77,7 +83,9 @@ leagueSchema.pre('save', function (next) {
 });
 
 //Sprawdzanie unikalności nazwy i kodu
-leagueSchema.plugin(uniqueValidator, { message: 'Ten {PATH} już istnieje!' });
+leagueSchema.plugin(uniqueValidator, {
+    message: 'Ten {PATH} już istnieje!'
+});
 
 const League = mongoose.model('League', leagueSchema);
 

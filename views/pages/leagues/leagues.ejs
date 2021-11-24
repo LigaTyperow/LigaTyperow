@@ -20,12 +20,22 @@
                 <div class="card bg-light mb-3">
                     <div class="card-body">
                         <p class="h3 mb-3"><%= league.name %></p>
-                        <p>Graczy: <%= league.playersCount %></p>
+                        <p><b>Opis:</b> <%= league.description %></p>
+                        <p><b>Maksymalnie graczy:</b> <%= league.playersCount %></p>
                         <!-- .? - sprawdzenie czy do ligi jest przypisany user -->
-                        <p>Liga gracza: <%= league.user?.nick %></p>
+                        <p><b>Właściciel ligi:</b> <%= league.user?.nick %></p>
+
+                        <p><b>Gracze:</b> 
+                            <!-- Wylistowanie przypisanych graczy -->
+                            <% league.players.forEach(player => { %> 
+                                <%= player.nick %>,
+                            <% }); %>
+                        </p>
+                        
                         <a href="/ligi/<%= league.slug %>" class="btn btn-primary">Zobacz</a>
                         <!-- Jeśli user jest zalogowany -->
                         <% if (user) { %>
+                        <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
                         <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
                         <a href="/zalogowany/ligi/<%= league.slug %>/usun"
                             onclick="return confirm('Czy jesteś pewien?')" class="btn btn-danger">Usuń</a>

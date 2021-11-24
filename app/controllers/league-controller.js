@@ -44,7 +44,12 @@ class LeagueController {
         }
 
         //uruchamiam moje query - z użytymi parametrami
-        const leagues = await query.populate('user').exec(); //populate - wypełnij pole user danymi jakimi chcesz a samym id       
+        const leagues = await query.populate([
+            //populate - dzięki temu, możemy odwołać się do konkretnego pola z kolekcji User, a nie samo id usera
+            'user', 
+            'players'
+        ]).exec();       
+
         const resultsCount = await League.find(where).count(); //ilość wszystkich lig
         const pagesCount = Math.ceil(resultsCount / perPage); //zaokrągla liczbe ilości stron
 
@@ -62,28 +67,32 @@ class LeagueController {
         const { name } = req.params;        
     
         //wczytujemy dane z bd
-        const league = await League.findOne({ slug: name });
+        const league = await League.findOne({ slug: name }).populate(['user', 'players']);        
     
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
+            league,
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
             name: league?.name,
             description: league?.description,
+            players: league?.players,
             playersCount: league?.playersCount,
             privacy: league?.privacy,
             code: league?.code,
+            user: league?.user,
         });
     }
 
     showCreateLeagueForm(req, res) {
-        res.render('pages/leagues/create');
+        res.render('pages/leagues/create', {
+            title: 'Nowa liga'
+        });
     }
 
     //musi być async, bo bedziemy łaczyc sie z bazą danych
     async createLeague(req, res) {
         //zapisanie wpisanych danych do bd
-        const league = new League({
-            title: 'Tworzenie',
+        const league = new League({            
             name: req.body.name,
             description: req.body.description,
             playersCount: req.body.playersCount || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
@@ -98,6 +107,7 @@ class LeagueController {
         } catch (e) {
             //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
             res.render('pages/leagues/create', {
+                title: 'Nowa liga',
                 errors: e.errors,
                 form: req.body //musimy przesłać dane z formularza
             });
@@ -118,7 +128,7 @@ class LeagueController {
 
     //musi być async, bo bedziemy łaczyc sie z bd
     async editLeague(req, res) {
-        //pobieramy firme
+        //pobieramy lige
         const { name } = req.params;
         const league = await League.findOne({ slug: name });
 
@@ -136,6 +146,7 @@ class LeagueController {
         } catch (e) {
             //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
             res.render('pages/leagues/edit', {
+                title: 'Edycja',
                 errors: e.errors,
                 form: req.body //musimy przesłać dane z formularza
             });
@@ -152,6 +163,51 @@ class LeagueController {
             //błędy nieprzewidziane
         }
     }   
+
+    // DOŁĄCZANIE DO LIGI
+    async showJoinLeagueForm(req, res) {        
+        res.render('pages/leagues/join', {
+            title: 'Dołącz'
+        });
+    }
+
+    async joinLeague(req, res) {
+        const enteredCode = req.body.code;
+        const league = await League.findOne({ code: enteredCode }); //wyszukujemy lige po kodzie
+
+        // https://mongoosejs.com/docs/subdocs.html#adding-subdocs-to-arrays
+        //TUTAJ PODMIENIASZ, CHYBA TRZEBA ZMIENIC TYP ZEBY DODAWALO KOLEJNEGO GRACZA
+        //league.players = req.session.user._id; //przypisz usera do ligi
+
+        league.players.push(req.session.user._id); //dołączenie do tablicy graczy
+
+        try {
+            await league.save();
+            res.redirect('/ligi');    //przekierowanie na jakis adres po zapisaniu            
+        } catch (e) {
+            console.log(e);
+            //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
+            res.render('pages/leagues/join', {
+                title: 'Dołącz',
+                errors: e.errors,
+                form: req.body //musimy przesłać dane z formularza
+            });
+        }
+    }
+
+    async joinLeagueButton(req, res) {
+        const { name } = req.params;
+        const league = await League.findOne({ slug: name }); //wyszukujemy lige po slugu
+
+        league.players.push(req.session.user._id); //dołączenie do tablicy graczy
+
+        try {      
+            await league.save();
+            res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+        } catch (e) {
+            console.log(e);
+        }
+    }
 }
 
 module.exports = new LeagueController();

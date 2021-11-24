@@ -98,7 +98,7 @@ class UserController {
             await user.save();
             req.session.user = user; //aktualizacja sesji
 
-            res.redirect('/zalogowany/profil'); //wyświetla ponownie formularz
+            res.redirect('/'); //wyświetla homepage
         } catch (e) {
             res.render('pages/auth/profile', {   
                 title: 'Mój profil',             

@@ -1,10 +1,12 @@
 <div class="container">
     <% if (name) { %>
         <h1>Nazwa ligi: <%= name %></h1> <!-- Użycie zmiennej przekazanej w kontrolerze -->
-        <p>Opis: <%= description %></p>
-        <p>Liczba graczy: <%= playersCount %></p>
-        <p>Dostępność: <%= privacy %></p>
-        <p>Kod ligi: <%= code %></p>
+        <p><b>Opis:</b> <%= description %></p>
+        <p><b>Gracze:</b> <%= league.players?.nick %></p>
+        <p><b>Maksymalna liczba graczy:</b> <%= playersCount %></p>
+        <p><b>Dostępność:</b> <%= privacy %></p>
+        <p><b>Kod ligi:</b> <%= code %></p>
+        <p><b>Właściciel ligi:</b> <%= league.user?.nick %></p>
     <% } else { %>
         <h1>Nie ma takiej ligi!</h1>
     <% } %>
