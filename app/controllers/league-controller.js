@@ -59,7 +59,7 @@ class LeagueController {
             leagues: leagues, //zamiast tego zapisu można po prostu napisać "leagues"
             page,   //która aktualnie jest strona
             pagesCount, 
-            resultsCount    
+            resultsCount,
         });
     }
 
@@ -165,7 +165,7 @@ class LeagueController {
     }   
 
     // DOŁĄCZANIE DO LIGI
-    async showJoinLeagueForm(req, res) {        
+    async showJoinLeagueForm(req, res) {            
         res.render('pages/leagues/join', {
             title: 'Dołącz'
         });
@@ -175,10 +175,7 @@ class LeagueController {
         const enteredCode = req.body.code;
         const league = await League.findOne({ code: enteredCode }); //wyszukujemy lige po kodzie
 
-        // https://mongoosejs.com/docs/subdocs.html#adding-subdocs-to-arrays
-        //TUTAJ PODMIENIASZ, CHYBA TRZEBA ZMIENIC TYP ZEBY DODAWALO KOLEJNEGO GRACZA
-        //league.players = req.session.user._id; //przypisz usera do ligi
-
+        // https://mongoosejs.com/docs/subdocs.html#adding-subdocs-to-arrays      
         league.players.push(req.session.user._id); //dołączenie do tablicy graczy
 
         try {
@@ -198,16 +195,35 @@ class LeagueController {
     async joinLeagueButton(req, res) {
         const { name } = req.params;
         const league = await League.findOne({ slug: name }); //wyszukujemy lige po slugu
+            
+            // let userExist = false;
+            // console.log(league.players.includes(req.session.user._id));
+            if (league.players.includes(req.session.user._id)) {
+                console.log(`TEN USER JUZ W NIEJ JEST`);
+                // alert('Należysz już do tej ligi!');
+            } else {
+                league.players.push(req.session.user._id);
+                console.log(`DODANO`);      
+                
+                try {      
+                    await league.save();
+                    res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+                } catch (e) {
+                    console.log(e);
+                }
+            }
 
-        league.players.push(req.session.user._id); //dołączenie do tablicy graczy
+        // league.players.push(req.session.user._id); //dołączenie do tablicy graczy
 
-        try {      
-            await league.save();
-            res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
-        } catch (e) {
-            console.log(e);
-        }
+        // try {      
+        //     await league.save();
+        //     res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+        // } catch (e) {
+        //     console.log(e);
+        // }
     }
 }
 
 module.exports = new LeagueController();
+
+

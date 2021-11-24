@@ -35,10 +35,10 @@
                         <a href="/ligi/<%= league.slug %>" class="btn btn-primary">Zobacz</a>
                         <!-- Jeśli user jest zalogowany -->
                         <% if (user) { %>
-                        <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
-                        <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
-                        <a href="/zalogowany/ligi/<%= league.slug %>/usun"
-                            onclick="return confirm('Czy jesteś pewien?')" class="btn btn-danger">Usuń</a>
+                            <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
+                            <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
+                            <a href="/zalogowany/ligi/<%= league.slug %>/usun"
+                                onclick="return confirm('Czy jesteś pewien?')" class="btn btn-danger">Usuń</a>
                         <% } %>
                     </div>
                 </div>
