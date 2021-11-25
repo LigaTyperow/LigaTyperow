@@ -17,6 +17,8 @@
             <div class="col-9">
                 <!-- Wylistowanie istniejących lig -->
                 <% leagues.forEach(league => { %>
+                <!-- Zmienna exist pomaga ustalić czy user należy do danej ligi -->
+                <% let exist=false %>
                 <div class="card bg-light mb-3">
                     <div class="card-body">
                         <p class="h3 mb-3"><%= league.name %></p>
@@ -27,15 +29,24 @@
 
                         <p><b>Gracze:</b> 
                             <!-- Wylistowanie przypisanych graczy -->
-                            <% league.players.forEach(player => { %> 
-                                <%= player.nick %>,
+                            <% league.players.forEach(player => { %>                                 
+                                <% if (player.nick == user.nick) { %>
+                                    <!-- Jeśli user należy do ligi to wyróżniamy jego nick -->
+                                    <b class="text-success" ><%= player.nick %>,</b>
+                                    <% exist = true %>
+                                <% } else { %>                                    
+                                    <%= player.nick %>,                                    
+                                <% } %>                                
                             <% }); %>
                         </p>
                         
                         <a href="/ligi/<%= league.slug %>" class="btn btn-primary">Zobacz</a>
                         <!-- Jeśli user jest zalogowany -->
                         <% if (user) { %>
-                            <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
+                            <!-- Jeśli user należy już do ligi to nie pokazuj przycisku Dołącz -->
+                            <% if (!exist) { %>
+                                <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
+                            <% } %>
                             <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
                             <a href="/zalogowany/ligi/<%= league.slug %>/usun"
                                 onclick="return confirm('Czy jesteś pewien?')" class="btn btn-danger">Usuń</a>

@@ -194,33 +194,23 @@ class LeagueController {
 
     async joinLeagueButton(req, res) {
         const { name } = req.params;
-        const league = await League.findOne({ slug: name }); //wyszukujemy lige po slugu
+        const league = await League.findOne({ slug: name }); //wyszukujemy lige po slugu    
+
+        //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
+            //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
+        if (league.players.includes(req.session.user._id)) {
+            console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
+        } else {
+            league.players.push(req.session.user._id);
+            console.log(`DODANO`);      
             
-            // let userExist = false;
-            // console.log(league.players.includes(req.session.user._id));
-            if (league.players.includes(req.session.user._id)) {
-                console.log(`TEN USER JUZ W NIEJ JEST`);
-                // alert('Należysz już do tej ligi!');
-            } else {
-                league.players.push(req.session.user._id);
-                console.log(`DODANO`);      
-                
-                try {      
-                    await league.save();
-                    res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
-                } catch (e) {
-                    console.log(e);
-                }
+            try {      
+                await league.save();
+                res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+            } catch (e) {
+                console.log(e);
             }
-
-        // league.players.push(req.session.user._id); //dołączenie do tablicy graczy
-
-        // try {      
-        //     await league.save();
-        //     res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
-        // } catch (e) {
-        //     console.log(e);
-        // }
+        }     
     }
 }
 
