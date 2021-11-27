@@ -28,4 +28,9 @@ module.exports = {
             throw new Error('Nazwa "slug" jest zakazana');
         }
     },
+
+    engCharacters(name) {
+        const re = /^[a-zA-Z0-9 ]*$/;
+        return re.test(name);
+    },
 };

@@ -176,17 +176,30 @@ class LeagueController {
         const league = await League.findOne({ code: enteredCode }); //wyszukujemy lige po kodzie
 
         // https://mongoosejs.com/docs/subdocs.html#adding-subdocs-to-arrays      
-        league.players.push(req.session.user._id); //dołączenie do tablicy graczy
 
+        //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
+            //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
         try {
-            await league.save();
-            res.redirect('/ligi');    //przekierowanie na jakis adres po zapisaniu            
+            if (league.players.includes(req.session.user._id)) {
+                console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
+                res.render('pages/leagues/join', {
+                    title: 'Dołącz',
+                    errors: true,
+                    form: req.body //musimy przesłać dane z formularza
+                });
+            } else {
+                league.players.push(req.session.user._id); //dołączenie do tablicy graczy                    
+                
+                await league.save();                
+                res.render('pages/leagues/join', {
+                    success: true                    
+                });
+            }     
         } catch (e) {
             console.log(e);
-            //jeśli zostanie wyłapany błąd, to generujemy znowu tą stronę z formularzem i pokazujemy błędy
             res.render('pages/leagues/join', {
                 title: 'Dołącz',
-                errors: e.errors,
+                errors: true,
                 form: req.body //musimy przesłać dane z formularza
             });
         }
@@ -199,11 +212,10 @@ class LeagueController {
         //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
             //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
         if (league.players.includes(req.session.user._id)) {
-            console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
+            // console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
         } else {
-            league.players.push(req.session.user._id);
-            console.log(`DODANO`);      
-            
+            league.players.push(req.session.user._id); //dołączenie do tablicy graczy 
+
             try {      
                 await league.save();
                 res.redirect('/ligi');    //przekierowanie na wyświetlenie lig

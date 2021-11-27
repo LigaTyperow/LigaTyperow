@@ -3,7 +3,7 @@
 const mongoose = require('mongoose'); //pobieramy mongoose
 const Schema = mongoose.Schema; //pobieramy Schema
 const uniqueValidator = require('mongoose-unique-validator'); //lib do walidacji unique
-// const { checkDuration } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
+const { engCharacters } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
 
 //Stworzenie modelu, na podstawie, którego powstanie kolekcja
 const leagueSchema = new Schema({
@@ -13,6 +13,7 @@ const leagueSchema = new Schema({
         minLength: [3, 'Minimalna liczba znaków to 3!'],
         maxLength: [30, 'Maksymalna liczba znaków to 30!'],
         unique: true,
+        validate: [engCharacters, 'Znaki specjalne są niedozwolone!'],
     },
     slug: {
         type: String,
