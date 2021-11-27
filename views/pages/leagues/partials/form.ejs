@@ -8,7 +8,7 @@
                 name="name"
                 maxlength="30"
                 value="<%= form.name %>" 
-                class="form-control <%- errors?.name ? 'is-invalid' : '' %>" required>   
+                class="form-control <%= errors?.name ? 'is-invalid' : '' %>" required>   
             <!-- sprawdzamy czy konkretny błąd tego pola istnieje, jeśli nie ma to wartość jest null i nie wchodzi do ifa -->
             <% if (errors?.name) { %>  
                 <div class="invalid-feedback"><%= errors.name.message %></div>    
@@ -34,7 +34,7 @@
                 name="playersCount" 
                 min="0" max="20"
                 value="<%= form.playersCount %>"
-                class="form-control <%- errors?.playersCount ? 'is-invalid' : '' %>" required>        
+                class="form-control <%= errors?.playersCount ? 'is-invalid' : '' %>" required>        
             <% if (errors?.playersCount) { %>  
                 <div class="invalid-feedback"><%= errors.playersCount.message %></div>    
             <% } %>
@@ -45,7 +45,7 @@
             <input type="text" 
                 name="privacy" 
                 value="<%= form.privacy %>"
-                class="form-control <%- errors?.privacy ? 'is-invalid' : '' %>" required>
+                class="form-control <%= errors?.privacy ? 'is-invalid' : '' %>" required>
             <div class="form-next">Proszę wpisać publiczna lub prywatna</div>
             <% if (errors?.privacy) { %>  
                 <div class="invalid-feedback"><%= errors.privacy.message %></div>    
@@ -60,7 +60,7 @@
                     name="code" 
                     maxlength="30"
                     value="<%= form.code %>"
-                    class="form-control <%- errors?.code ? 'is-invalid' : '' %>" required>
+                    class="form-control <%= errors?.code ? 'is-invalid' : '' %>" required>
                 <% if (errors?.code) { %>  
                     <div class="invalid-feedback"><%= errors.code.message %></div>    
                 <% } %>

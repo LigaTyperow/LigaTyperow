@@ -5,7 +5,7 @@
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <!-- niżej: Dzięki value, po złym wypełnieniu pól, wartości z pól nie znikają -->
-            <input type="email" class="form-control <%- errors?.email ? 'is-invalid' : '' %>" name="email"
+            <input type="email" class="form-control <%= errors?.email ? 'is-invalid' : '' %>" name="email"
                 value="<%= form.email %>" id="email" required>
             <!-- sprawdzamy czy konkretny błąd tego pola istnieje, jeśli nie ma to wartość jest null i nie wchodzi do ifa -->
             <% if (errors?.email) { %>

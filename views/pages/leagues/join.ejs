@@ -5,7 +5,7 @@
         <div class="mb-3">
             <label for="" class="form-label">Kod do ligi</label>
             <input type="text" name="code" maxlength="30" value="<%= form.code %>"
-                class="form-control <%- errors?.code ? 'is-invalid' : '' %>" required>
+                class="form-control <%= errors?.code ? 'is-invalid' : '' %>" required>
             <div class="form-next">Przynajmniej 3 znaki.</div>
             <% if (errors?.code) { %>
             <div class="invalid-feedback"><%= errors.code.message %></div>
