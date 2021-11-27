@@ -18,7 +18,7 @@
     <!-- powinno być " typeof errors !== 'undefined' ", ale mamy zmienną zdefiniowaną w view-middleware -->
     <% if (errors) { %>
         <div class="alert alert-danger mt-3 text-center">   
-            Błąd! Nieprawidłowy kod ligi lub już do tej ligi należysz!
+            Błąd! Nieprawidłowy kod ligi, już do tej ligi należysz lub nie ma miejsc w tej lidze!
         </div>
     <% } else if (success) { %>
         <div class="alert alert-success mt-3 text-center">   

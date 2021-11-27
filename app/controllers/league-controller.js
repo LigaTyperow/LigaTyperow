@@ -177,24 +177,26 @@ class LeagueController {
 
         // https://mongoosejs.com/docs/subdocs.html#adding-subdocs-to-arrays      
 
-        //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
-            //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
+        //Po stronie backendu też powinniśmy zrobić walidację
+        // Musimy użyć try catch w przypadku, gdy user poda np tylko jedną cyfre
+        //Sprawdzamy czy zalogowany user istnieje juz do ligi i czy są jeszcze miejsca
         try {
-            if (league.players.includes(req.session.user._id)) {
-                console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
+            if ((!league.players.includes(req.session.user._id)) && (league.playersCount > league.players.length)) {
+                league.players.push(req.session.user._id); //dołączenie do tablicy players                    
+                
+                await league.save();                
+                res.render('pages/leagues/join', {
+                    title: 'Dołącz',
+                    success: true                    
+                });
+            } else {
+                console.log(`TEN USER JUZ JEST W TEJ LIDZE LUB NIE MA MIEJSC`);
                 res.render('pages/leagues/join', {
                     title: 'Dołącz',
                     errors: true,
                     form: req.body //musimy przesłać dane z formularza
                 });
-            } else {
-                league.players.push(req.session.user._id); //dołączenie do tablicy graczy                    
-                
-                await league.save();                
-                res.render('pages/leagues/join', {
-                    success: true                    
-                });
-            }     
+            }  
         } catch (e) {
             console.log(e);
             res.render('pages/leagues/join', {
@@ -212,7 +214,7 @@ class LeagueController {
         //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
             //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
         if (league.players.includes(req.session.user._id)) {
-            // console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
+            console.log(`TEN USER JUZ JEST W TEJ LIDZE`);
         } else {
             league.players.push(req.session.user._id); //dołączenie do tablicy graczy 
 
@@ -222,6 +224,26 @@ class LeagueController {
             } catch (e) {
                 console.log(e);
             }
+        }     
+    }
+
+    async leaveLeagueButton(req, res) {
+        const { name } = req.params;
+        const league = await League.findOne({ slug: name }); //wyszukujemy lige po slugu    
+        
+        //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
+            //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
+        if (league.players.includes(req.session.user._id)) {            
+            league.players.pull(req.session.user._id); //dołączenie do tablicy graczy 
+
+            try {      
+                await league.save();
+                res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+            } catch (e) {
+                console.log(e);
+            }
+        } else {    
+            console.log(`TEN USER NIE JEST W TEJ LIDZE`);
         }     
     }
 }

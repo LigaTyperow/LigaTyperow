@@ -22,18 +22,32 @@
                 <div class="card bg-light mb-3">
                     <div class="card-body">
                         <p class="h3 mb-3"><%= league.name %></p>
-                        <p><b>Opis:</b> <%= league.description %></p>
+
+                        <!-- Jeśli nie ma opisu to nie pokazuj go -->
+                        <% if (league.description) { %>
+                            <p><b>Opis:</b> <%= league.description %></p>
+                        <% } %> 
+
                         <p><b>Maksymalnie graczy:</b> <%= league.playersCount %></p>
                         <!-- .? - sprawdzenie czy do ligi jest przypisany user -->
                         <p><b>Właściciel ligi:</b> <%= league.user?.nick %></p>
 
                         <p><b>Gracze:</b> 
-                            <!-- Wylistowanie przypisanych graczy -->
-                            <% league.players.forEach(player => { %>                                 
-                                <% if (player.nick == user.nick) { %>
-                                    <!-- Jeśli user należy do ligi to wyróżniamy jego nick -->
-                                    <b class="text-success" ><%= player.nick %>,</b>
-                                    <% exist = true %>
+                            <!-- Wylistowanie graczy należących do ligi -->
+                            <% league.players.forEach(player => { %> 
+                                <!-- Aby wyróżnić zalogowanego usera wśród członków, najpierw musimy sprawdzić czy jest zalogowany -->
+                                <% if (user) { %>    
+
+                                    <!-- Jeśli zalogowany user należy do ligi to wyróżniamy jego nick -->
+                                    <% if (player.nick == user.nick) { %>                                        
+                                        <b class="text-success" ><%= player.nick %>,</b>
+
+                                        <!-- Zwracamy true, informując niżej, że user należy do ligi -->
+                                        <% exist = true %>
+                                    <% } else { %>
+                                        <!-- Jeśli nie zrobimy tutaj else to wyświetli tylko zalogowanego usera w graczach -->
+                                        <%= player.nick %>, 
+                                    <% } %> 
                                 <% } else { %>                                    
                                     <%= player.nick %>,                                    
                                 <% } %>                                
@@ -43,13 +57,29 @@
                         <a href="/ligi/<%= league.slug %>" class="btn btn-primary">Zobacz</a>
                         <!-- Jeśli user jest zalogowany -->
                         <% if (user) { %>
-                            <!-- Jeśli user należy już do ligi to nie pokazuj przycisku Dołącz -->
+
+                            <!-- Jeśli user należy już do ligi to nie pokazuj przycisku Dołącz, a pokaż Opuść -->
                             <% if (!exist) { %>
-                                <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
+
+                                <!-- Jeśli liga jest prywatna to nie pokazuj przycisku Dołącz -->
+                                <% if (league.privacy == 'publiczna') { %>
+
+                                    <!-- Warunek czy w lidze jest jeszcze miejsce -->
+                                    <% if (league.playersCount > league.players.length) { %> 
+                                        <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
+                                    <% } %>
+                                <% } %>
+                            <% } else { %>
+                                <!-- Jeśli liga jest prywatna to user może opuścić ligę na bieżącej stronie z ligami -->
+                                <a href="/zalogowany/ligi/<%= league.slug %>/opusc" class="btn btn-danger">Opuść</a>
                             <% } %>
-                            <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
-                            <a href="/zalogowany/ligi/<%= league.slug %>/usun"
-                                onclick="return confirm('Czy jesteś pewien?')" class="btn btn-danger">Usuń</a>
+                            
+                            <!-- Sprawdzamy czy user jest właścicielem ligi -->
+                            <% if (league.user.nick == user.nick) { %>
+                                <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
+                                <a href="/zalogowany/ligi/<%= league.slug %>/usun"
+                                    onclick="return confirm('Czy jesteś pewien?')" class="btn btn-outline-danger">Usuń</a>
+                            <% } %>
                         <% } %>
                     </div>
                 </div>

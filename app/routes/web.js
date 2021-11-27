@@ -43,6 +43,9 @@ router.get('/zalogowany/ligi/dolacz', LeagueController.showJoinLeagueForm); //wy
 router.post('/zalogowany/ligi/dolacz', LeagueController.joinLeague); //obsługa formularza wysłanego za pomocą POST
 router.get('/zalogowany/ligi/:name/dolacz', LeagueController.joinLeagueButton); //dołączenie do ligi przez przycisk
 
+// OPUSZCZANIE LIGI
+router.get('/zalogowany/ligi/:name/opusc', LeagueController.leaveLeagueButton); //opuszczanie ligi przez przycisk
+
 // BŁĘDNE ADRESY
 router.get('*', PageController.showNotFound);
 

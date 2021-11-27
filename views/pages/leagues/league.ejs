@@ -2,11 +2,23 @@
     <% if (name) { %>
         <h1>Nazwa ligi: <%= name %></h1> <!-- Użycie zmiennej przekazanej w kontrolerze -->
         <p><b>Opis:</b> <%= description %></p>
-        <p><b>Gracze:</b> <%= league.players?.nick %></p>
-        <p><b>Maksymalna liczba graczy:</b> <%= playersCount %></p>
-        <p><b>Dostępność:</b> <%= privacy %></p>
-        <p><b>Kod ligi:</b> <%= code %></p>
-        <p><b>Właściciel ligi:</b> <%= league.user?.nick %></p>
+        
+        <p><b>Gracze:</b> 
+            <!-- Wylistowanie graczy należących do ligi -->
+            <% players.forEach(player => { %>     
+                <%= player.nick %>,
+            <% }); %>
+        </p>
+
+        <p><b>Maksymalna liczba graczy:</b> <%= playersCount %></p>        
+        <p><b>Dostępność:</b> <%= privacy %></p>        
+
+        <!-- Jeśli liga jest prywatna to nie pokazuj kodu ligi -->
+        <% if (privacy == 'publiczna') { %>
+            <p><b>Kod ligi:</b> <%= code %></p>
+        <% } %>
+
+        <p><b>Właściciel ligi:</b> <%= user.nick %></p>
     <% } else { %>
         <h1>Nie ma takiej ligi!</h1>
     <% } %>
