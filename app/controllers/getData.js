@@ -1,6 +1,7 @@
 //Pobieranie danych GET z API i POST jako obiekt do kontrolera
 
 const axios = require('axios');
+const { db } = require('../db/models/match.js');
 const Match = require('../db/models/match.js');
 
 // W razie czego
@@ -61,9 +62,10 @@ async function ifDataExist() {
         console.log(error);
     }
 
-    let dbInfo = await Match.findOne({ leagueName: 'Premier League', gameweek: currentMatchday });
-    
-    //Jeśli kolejka obojętnie z jakiej ligi jest inna to mamy nieaktualne dane usuwamy wszystkie mecze i wgrywamy nową
+    //sprawdzamy ostatnią kolejke
+    let dbInfo = await Match.findOne({ leagueName: 'Premier League', status: 'FINISHED' });    
+
+    //Jeśli ostatnia kolejka ze statusem FINISHED ma inny currentMatchday
     if (dbInfo.gameweek != currentMatchday) {
         console.log(`USUNIETO`);
         await Match.deleteMany();
