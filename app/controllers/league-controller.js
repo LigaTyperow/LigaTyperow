@@ -50,7 +50,7 @@ class LeagueController {
             'players'
         ]).exec();       
 
-        const resultsCount = await League.find(where).count(); //ilość wszystkich lig
+        const resultsCount = await League.find(where).countDocuments(); //ilość wszystkich lig
         const pagesCount = Math.ceil(resultsCount / perPage); //zaokrągla liczbe ilości stron
 
         // Przekazujemy wartości i wyświetlamy strone z ligami
