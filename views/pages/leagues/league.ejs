@@ -3,10 +3,21 @@
         <h1>Nazwa ligi: <%= name %></h1> <!-- Użycie zmiennej przekazanej w kontrolerze -->
         <p><b>Opis:</b> <%= description %></p>
         
+        <% let exist=false %>
         <p><b>Gracze:</b> 
             <!-- Wylistowanie graczy należących do ligi -->
             <% players.forEach(player => { %>     
                 <%= player.nick %>,
+
+                <!-- Sprawdzamy czy user jest zalogowany -->
+                <% if (user) { %> 
+
+                    <!-- Jeśli zalogowany user należy do ligi to zwracamy wartość true -->
+                    <% if (player.nick == user.nick) { %> 
+                        <% exist=true %>
+                    <% } %>
+
+                <% } %>                
             <% }); %>
         </p>
 
@@ -18,7 +29,47 @@
             <p><b>Kod ligi:</b> <%= code %></p>
         <% } %>
 
-        <p><b>Właściciel ligi:</b> <%= user.nick %></p>
+        <p><b>Właściciel ligi:</b> <%= owner.nick %></p>
+
+        <!-- Sprawdzamy czy user jest zalogowany -->
+        <% if (user) { %> 
+
+            <!-- Sprawdzamy czy user należy do ligi, jeśli tak to może wytypować wyniki -->
+            <% if (exist) { %> 
+                <form method="POST" class="text-center">
+                    <h3>Wytypuj wyniki</h3>
+
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label for="form-label" class="">HomeTeam</label>
+                        </div>
+                        <div class="col-1">
+                            <input type="number" 
+                                name="homeTeamScore" 
+                                min="0" max="20"
+                                value="0"
+                                class="form-control" required> 
+                        </div>
+
+                        <div class="col-2">:</div>
+
+                        <div class="col-1">
+                            <input type="number" 
+                            name="homeTeamScore" 
+                            min="0" max="20"
+                            value="0"
+                            class="form-control" required> 
+                        </div>                                    
+                        <div class="col-4">
+                            <label for="form-label" class="">AwayTeam</label>
+                        </div>           
+                    </div>
+
+                    <a href="#" class="btn btn-success">Wytypuj</a>
+                </form>
+            <% } %>     
+
+        <% } %> 
     <% } else { %>
         <h1>Nie ma takiej ligi!</h1>
     <% } %>

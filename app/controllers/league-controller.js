@@ -46,7 +46,7 @@ class LeagueController {
         //uruchamiam moje query - z użytymi parametrami
         const leagues = await query.populate([
             //populate - dzięki temu, możemy odwołać się do konkretnego pola z kolekcji User, a nie samo id usera
-            'user', 
+            'owner', 
             'players'
         ]).exec();       
 
@@ -67,7 +67,7 @@ class LeagueController {
         const { name } = req.params;        
     
         //wczytujemy dane z bd
-        const league = await League.findOne({ slug: name }).populate(['user', 'players']);        
+        const league = await League.findOne({ slug: name }).populate(['owner', 'players']);        
     
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
@@ -79,7 +79,7 @@ class LeagueController {
             playersCount: league?.playersCount,
             privacy: league?.privacy,
             code: league?.code,
-            user: league?.user,
+            owner: league?.owner,
         });
     }
 
@@ -98,7 +98,7 @@ class LeagueController {
             playersCount: req.body.playersCount || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
             privacy: req.body.privacy,
             code: req.body.code,
-            user: req.session.user._id, //przy tworzeniu ligi, przypisz lige do usera
+            owner: req.session.user._id, //przy tworzeniu ligi, przypisz lige do usera
         });
 
         try {
@@ -138,7 +138,6 @@ class LeagueController {
         league.playersCount = req.body.playersCount;    
         league.privacy = req.body.privacy;    
         league.code = req.body.code;    
-        // league.user = req.session.user._id, //przypisz lige do usera
 
         try {
             await league.save();

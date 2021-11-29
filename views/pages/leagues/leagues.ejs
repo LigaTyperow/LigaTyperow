@@ -30,7 +30,7 @@
 
                         <p><b>Maksymalnie graczy:</b> <%= league.playersCount %></p>
                         <!-- .? - sprawdzenie czy do ligi jest przypisany user -->
-                        <p><b>Właściciel ligi:</b> <%= league.user?.nick %></p>
+                        <p><b>Właściciel ligi:</b> <%= league.owner?.nick %></p>
 
                         <p><b>Gracze:</b> 
                             <!-- Wylistowanie graczy należących do ligi -->
@@ -75,7 +75,7 @@
                             <% } %>
                             
                             <!-- Sprawdzamy czy user jest właścicielem ligi -->
-                            <% if (league.user.nick == user.nick) { %>
+                            <% if (league.owner.nick == user.nick) { %>
                                 <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
                                 <a href="/zalogowany/ligi/<%= league.slug %>/usun"
                                     onclick="return confirm('Czy jesteś pewien?')" class="btn btn-outline-danger">Usuń</a>

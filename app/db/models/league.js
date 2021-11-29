@@ -48,14 +48,9 @@ const leagueSchema = new Schema({
         lowercase: true,
         trim: true,
         unique: true,
-    },
-    // duration: {
-    //     type: String,
-    //     required: [true, 'Długość trwania ligi jest wymagana!'],
-    //     validate: [checkDuration, 'Proszę wprowadzić termin zakończenia trwania ligi w formacie YYYY-MM-DD!'],
-    // },
+    },    
     //referencja do użytkownika - przy tworzeniu ligi przypisujemy ją do usera      
-    user: {
+    owner: {
         //Właściciel
         type: mongoose.Types.ObjectId,
         required: true,
