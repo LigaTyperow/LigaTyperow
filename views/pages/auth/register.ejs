@@ -1,36 +1,55 @@
-<div class="container">
-    <h1>Rejestracja</h1>
+<div class="bor-div">
+	<div class="container justify-content-center login-size text-center">
+		<h1>Rejestracja</h1>
 
-    <form method="POST">
-        <div class="mb-3">
-            <label for="nick" class="form-label">Nick</label>
-            <input type="text" class="form-control <%= errors?.nick ? 'is-invalid' : '' %>" name="nick"
-                value="<%= form.nick %>" id="nick">
-            <% if (errors?.nick) { %>
-            <div class="invalid-feedback"><%= errors.nick.message %></div>
-            <% } %>
-        </div>
+		<form method="POST">
+			<div class="mb-3">
+				<label for="nick" class="form-label">Nick</label>
+				<input
+					type="text"
+					class="form-control <%= errors?.nick ? 'is-invalid' : '' %>"
+					name="nick"
+					value="<%= form.nick %>"
+					id="nick"
+				/>
+				<% if (errors?.nick) { %>
+				<div class="invalid-feedback"><%= errors.nick.message %></div>
+				<% } %>
+			</div>
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <!-- niżej: Dzięki value, po złym wypełnieniu pól, wartości z pól nie znikają -->
-            <input type="email" class="form-control <%= errors?.email ? 'is-invalid' : '' %>" name="email"
-                value="<%= form.email %>" id="email" required>
-            <!-- sprawdzamy czy konkretny błąd tego pola istnieje, jeśli nie ma to wartość jest null i nie wchodzi do ifa -->
-            <% if (errors?.email) { %>
-            <div class="invalid-feedback"><%= errors.email.message %></div>
-            <% } %>
-        </div>
+			<div class="mb-3">
+				<label for="email" class="form-label">Email</label>
+				<!-- niżej: Dzięki value, po złym wypełnieniu pól, wartości z pól nie znikają -->
+				<input
+					type="email"
+					class="form-control <%= errors?.email ? 'is-invalid' : '' %>"
+					name="email"
+					value="<%= form.email %>"
+					id="email"
+					required
+				/>
+				<!-- sprawdzamy czy konkretny błąd tego pola istnieje, jeśli nie ma to wartość jest null i nie wchodzi do ifa -->
+				<% if (errors?.email) { %>
+				<div class="invalid-feedback"><%= errors.email.message %></div>
+				<% } %>
+			</div>
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Hasło</label>
-            <input type="password" class="form-control <%= errors?.password ? 'is-invalid' : '' %>" name="password"
-                id="password" required>
-            <% if (errors?.password) { %>
-            <div class="invalid-feedback"><%= errors.password.message %></div>
-            <% } %>
-        </div>
+			<div class="mb-3">
+				<label for="password" class="form-label">Hasło</label>
+				<input
+					type="password"
+					class="form-control <%= errors?.password ? 'is-invalid' : '' %>"
+					name="password"
+					id="password"
+					required
+				/>
+				<% if (errors?.password) { %>
+				<div class="invalid-feedback"><%= errors.password.message %></div>
+				<% } %>
+			</div>
 
-        <button class="btn btn-success">Zarejestruj</button>
-    </form>
+			<button class="btn btn-success">Zarejestruj</button>
+		</form>
+	</div>
 </div>
+<div class="zap"></div>
