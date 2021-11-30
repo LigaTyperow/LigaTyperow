@@ -17,7 +17,7 @@ const leagueNames = ["PL", "BL1", "SA", "PD"] // skróty nazw lig to pobierania 
 async function getData(name) {
     try {
         //pobieramy cyfrę aktualnej kolejki ligi
-        const currentMatchday = await axios.get(`http://api.football-data.org/v2/competitions/${name}`, {
+        const currentMatchday = await axios.get(`https://api.football-data.org/v2/competitions/${name}`, {
             headers: headers
         }).then(resp => resp.data.currentSeason.currentMatchday)
 
@@ -50,39 +50,39 @@ async function getData(name) {
     }
 }
 
-async function ifDataExist() {
-    let currentMatchday = null;
-    try {
-        //pobieramy cyfrę aktualnej kolejki ligi
-        currentMatchday = await axios.get(`http://api.football-data.org/v2/competitions/PL`, {
-            headers: headers
-        }).then(resp => resp.data.currentSeason.currentMatchday)
+// async function ifDataExist() {
+//     let currentMatchday = null;
+//     try {
+//         //pobieramy cyfrę aktualnej kolejki ligi
+//         currentMatchday = await axios.get(`https://api.football-data.org/v2/competitions/PL`, {
+//             headers: headers
+//         }).then(resp => resp.data.currentSeason.currentMatchday)
 
-    } catch (error) {
-        console.log(error);
-    }
+//     } catch (error) {
+//         console.log(error);
+//     }
 
-    //sprawdzamy ostatnią kolejke
-    let dbInfo = await Match.findOne({ leagueName: 'Premier League', status: 'FINISHED' });    
+//     //sprawdzamy ostatnią kolejke
+//     let dbInfo = await Match.findOne({ leagueName: 'Premier League', status: 'FINISHED' });    
 
-    //Jeśli ostatnia kolejka ze statusem FINISHED ma inny currentMatchday
-    if (dbInfo.gameweek != currentMatchday) {
-        console.log(`USUNIETO`);
-        await Match.deleteMany();
+//     //Jeśli ostatnia kolejka ze statusem FINISHED ma inny currentMatchday
+//     if (dbInfo.gameweek != currentMatchday) {
+//         console.log(`USUNIETO`);
+//         await Match.deleteMany();
 
-        const leagueNames = ["PL", "BL1", "SA", "PD"];
+//         const leagueNames = ["PL", "BL1", "SA", "PD"];
 
-        leagueNames.forEach(name => {
-            getData(name)
-        })
-        console.log(`DODANO DO BAZY`);
-    } else {
-        //jeśli jest taka sama to nie robimy nic
-        console.log(`JUŻ ISTNIEJE`);
-    }
-}
+//         leagueNames.forEach(name => {
+//             getData(name)
+//         })
+//         console.log(`DODANO DO BAZY`);
+//     } else {
+//         //jeśli jest taka sama to nie robimy nic
+//         console.log(`JUŻ ISTNIEJE`);
+//     }
+// }
 
-ifDataExist();
+// ifDataExist();
 
 // POST do bazy danych ostatniej i przyszłej kolejki
 // leagueNames.forEach(name => {

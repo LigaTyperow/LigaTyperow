@@ -17,7 +17,7 @@ export const getDataForShedule = leagueName => {
 }
 
 export const getDataForTable = leagueName => {
-    return fetch(`http://api.football-data.org/v2/competitions/${leagueName}/standings`, {
+    return fetch(`https://api.football-data.org/v2/competitions/${leagueName}/standings`, {
         headers: {
           'Content-Type': 'application/json',
           'X-Auth-Token': personalToken
