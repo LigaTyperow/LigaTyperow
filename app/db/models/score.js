@@ -3,32 +3,38 @@
 
 const mongoose = require('mongoose'); //pobieramy mongoose
 const Schema = mongoose.Schema; //pobieramy Schema
-const { checkScore } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
+const { checkNumbers } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
 
 //Stworzenie modelu, na podstawie, którego powstanie kolekcja
 const scoreSchema = new Schema({
-    score: {
-        type: String,
+    scoreHome: {
+        type: Number,
         trim: true,
         required: [true, 'Wynik jest wymagany!'],
-        minLength: [3, 'Minimalna liczba znaków to 3, np "2:1"'],
-        maxLength: [5, 'Maksymalna liczba znaków to 5, np "10:12"'],
-        validate: [checkScore, 'Proszę wprowadzić poprawnie wynik, np "2:1"']
+        minLength: [0, 'Minimalna liczba wyniku to 0'],
+        maxLength: [20, 'Maksymalna liczba wyniku to 20'],
+        default: 0,
+        validate: [checkNumbers, 'Proszę wprowadzić cyfry!']
     },
-    points: {
+    scoreAway: {
         type: Number,
-        min: [0, 'Najmniejsza liczba puntków to 0!'],
-    },    
+        trim: true,
+        required: [true, 'Wynik jest wymagany!'],
+        minLength: [0, 'Minimalna liczba wyniku to 0'],
+        maxLength: [20, 'Maksymalna liczba wyniku to 20'],
+        default: 0,
+        validate: [checkNumbers, 'Proszę wprowadzić cyfry!']
+    },
     //referencje
-    match: {
+    league: {
         type: mongoose.Types.ObjectId, 
         // required: true,
-        ref: 'Match' 
+        ref: 'League' 
     },
     user: {
         type: mongoose.Types.ObjectId,
         // required: true,
-        ref: 'User' //potem w konkretnym controlerze użyjemy tego pola, np żeby zobaczyć w lidze usera
+        ref: 'User' 
     },
 });
 //##############################################################

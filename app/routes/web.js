@@ -27,6 +27,9 @@ router.post('/zalogowany/profil', UserController.update); // obsługa zmiany dan
 router.get('/ligi', LeagueController.showLeagues); //wyświetlenie wszystkich lig
 router.get('/ligi/:name', LeagueController.showLeague); //wyświetlnie konkretnej ligi
 
+// TYPOWANIE WYNIKU
+router.post('/ligi/:name', LeagueController.betButton); //obsługa formularza wysłanego za pomocą POST
+
 // TWORZENIE NOWEJ LIGI
 router.get('/zalogowany/ligi/dodaj', LeagueController.showCreateLeagueForm); //wyświetlenie formularza
 router.post('/zalogowany/ligi/dodaj', LeagueController.createLeague); //obsługa formularza wysłanego za pomocą POST
