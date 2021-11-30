@@ -36,20 +36,30 @@
 
             <!-- Sprawdzamy czy user należy do ligi, jeśli tak to może wytypować wyniki -->
             <% if (exist) { %> 
+                <% let betted=false %>
                 <form method="POST" class="text-center">
                     <h3>Wytypuj wyniki</h3>
 
-                    <% matches.forEach(match => { %>
+                    <% matches.forEach((match, index) => { %>
                         <div class="row mb-3">
                             <div class="col-4">
-                                <label for="form-label" class=""><%= match.homeTeam %></label>
+                                <label for="form-label" class="">  
+                                    <!-- Jeśli user już wytypował wyniki to ustaw betted=true -->
+                                    <% if (scores[index]?.homeTeam) { %>
+                                        <%= scores[index].homeTeam %>
+                                        <% betted=true %> 
+                                    <% } else { %> 
+                                        <%= match.homeTeam %>
+                                    <% } %> 
+                                </label>
                             </div>
                             <div class="col-1">
                                 <input type="number" 
                                     name="homeTeamScore" 
-                                    min="0" max="20"
-                                    value="0"
+                                    min="0" max="20" 
+                                    value="<%= scores[index]?.scoreHome ? scores[index].scoreHome : 0 %>"
                                     class="form-control" required> 
+                                    <!-- value: Jeśli są wytypowane wyniki to pokaż wynik, a jak nie to domyślnie 0 -->
                             </div>
 
                             <div class="col-2">:</div>
@@ -58,17 +68,21 @@
                                 <input type="number" 
                                 name="awayTeamScore" 
                                 min="0" max="20"
-                                value="0"
+                                value="<%= scores[index]?.scoreAway ? scores[index].scoreAway : 0 %>"
                                 class="form-control" required> 
                             </div>                                    
                             <div class="col-4">
-                                <label for="form-label" class=""><%= match.awayTeam %></label>
+                                <label for="form-label" class="">
+                                    <%= scores[index]?.awayTeam ? scores[index].awayTeam : match.awayTeam %>
+                                </label>
                             </div>           
                         </div>
                     <% }); %>
 
-                    <!-- <a href="/ligi/<%= league.slug %>" class="btn btn-success">Wytypuj</a> -->
-                    <button class="btn btn-success">Wytypuj</button>
+                    <!-- Jeśli user już wytypował to schowaj przycisk -->
+                    <% if (!betted) { %> 
+                        <button class="btn btn-success">Wytypuj</button>
+                    <% } %>  
                 </form>
             <% } %>     
 

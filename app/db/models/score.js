@@ -6,7 +6,10 @@ const Schema = mongoose.Schema; //pobieramy Schema
 const { checkNumbers } = require('../validators'); //walidacje do konkretnych pól w osobnym pliku
 
 //Stworzenie modelu, na podstawie, którego powstanie kolekcja
-const scoreSchema = new Schema({
+const scoreSchema = new Schema({       
+    homeTeam: {
+        type: String,
+    },
     scoreHome: {
         type: Number,
         trim: true,
@@ -15,6 +18,9 @@ const scoreSchema = new Schema({
         maxLength: [20, 'Maksymalna liczba wyniku to 20'],
         default: 0,
         validate: [checkNumbers, 'Proszę wprowadzić cyfry!']
+    },
+    awayTeam: {
+        type: String,
     },
     scoreAway: {
         type: Number,

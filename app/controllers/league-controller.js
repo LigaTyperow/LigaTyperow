@@ -70,12 +70,14 @@ class LeagueController {
     
         //wczytujemy dane z bd
         const league = await League.findOne({ slug: name }).populate(['owner', 'players']);  
-        const matches = await Match.find({ leagueName: 'Bundesliga', status: 'SCHEDULED'}) 
+        const matches = await Match.find({ leagueName: 'Bundesliga', status: 'SCHEDULED'});
+        const scores = await Score.find({ user: req.session.user._id }); //wczytujemy typy zalogowanego usera        
     
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
             league,
             matches,
+            scores,
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
             name: league?.name,
             description: league?.description,
@@ -90,28 +92,32 @@ class LeagueController {
     async betButton(req, res) {
         const { name } = req.params;
         const league = await League.findOne({ slug: name });
-        //z inputów zczytać wyniki
-        // 1 mecz = 1 dokument
 
-        const score = new Score({
-            scoreHome: req.body.homeTeamScore || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
-            scoreAway: req.body.awayTeamScore || undefined,
-            league: league, //req.params;
-            user: req.session.user._id, //przypisanie wyników do usera
-        });
-
-        try {      
-            console.log('Zapisano!');
-            await score.save();
-            res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
-        } catch (e) {
-            console.log(e);
-            res.render('pages/leagues/league', {
-                title: league?.name ?? 'Brak wyników',
-                errors: e.errors,
-                form: req.body //musimy przesłać dane z formularza
+        //pobieramy następną kolejkę
+        const matches = await Match.find({ leagueName: 'Bundesliga', status: 'SCHEDULED'});  
+        
+        // TYPOWANIE
+        matches.forEach(async (match, index) => {            
+            const score = new Score({  
+                homeTeam: match.homeTeam,
+                scoreHome: req.body.homeTeamScore[index] || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
+                awayTeam: match.awayTeam,
+                scoreAway: req.body.awayTeamScore[index] || undefined,
+                league: league, //req.params;
+                user: req.session.user._id, //przypisanie wyników do usera
             });
-        }
+    
+            try {                                      
+                console.log('Zapisano!');
+                await score.save();  
+                
+                res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
+            } catch (e) {
+                console.log('PROBLEM');
+                console.log(e);
+                res.render('pages/leagues');
+            }
+        });        
     }
 
     showCreateLeagueForm(req, res) {
