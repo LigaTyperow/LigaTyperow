@@ -2,6 +2,7 @@
     <% if (name) { %>
         <h1>Nazwa ligi: <%= name %></h1> <!-- Użycie zmiennej przekazanej w kontrolerze -->
         <p><b>Opis:</b> <%= description %></p>
+        <p><b>Wybrana liga:</b> <%= selectedLeague %></p>
         
         <% let exist=false %>
         <p><b>Gracze:</b> 
@@ -36,9 +37,14 @@
 
             <!-- Sprawdzamy czy user należy do ligi, jeśli tak to może wytypować wyniki -->
             <% if (exist) { %> 
-                <% let betted=false %>
-                <form method="POST" class="text-center">
-                    <h3>Wytypuj wyniki</h3>
+                <% let betted=true %>
+                <form method="POST" class="text-center pb-5">
+                    <% if (!betted) { %> 
+                        <h3 class="pb-3">Wytypuj wyniki:</h3>
+                    <% } else { %> 
+                        <h3 class="pb-3">Twoje TYPY:</h3>
+                        <% betted=false %> 
+                    <% } %> 
 
                     <% matches.forEach((match, index) => { %>
                         <div class="row mb-3">
@@ -55,11 +61,11 @@
                             </div>
                             <div class="col-1">
                                 <input type="number" 
-                                    name="homeTeamScore" 
-                                    min="0" max="20" 
-                                    value="<%= scores[index]?.scoreHome ? scores[index].scoreHome : 0 %>"
-                                    class="form-control" required> 
-                                    <!-- value: Jeśli są wytypowane wyniki to pokaż wynik, a jak nie to domyślnie 0 -->
+                                name="homeTeamScore" 
+                                min="0" max="20" 
+                                value="<%= scores[index]?.scoreHome ? scores[index].scoreHome : 0 %>"
+                                class="form-control" required> 
+                                <!-- value: Jeśli są wytypowane wyniki to pokaż wynik, a jak nie to domyślnie 0 -->                                
                             </div>
 
                             <div class="col-2">:</div>

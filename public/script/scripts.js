@@ -21,3 +21,11 @@
     document.querySelectorAll('.pagination a').forEach(a => {
         a.addEventListener('click', changePage);
     });
+
+// dodawanie readOnly inputs w league.ejs
+// document.getElementsByName('homeTeamScore').forEach(element => {
+//     element.disabled=true;
+// });
+// document.getElementsByName('awayTeamScore').forEach(element => {
+//     element.disabled=true;
+// });

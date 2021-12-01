@@ -20,6 +20,14 @@ const leagueSchema = new Schema({
         trim: true,
         lowercase: true,
     },
+    selectedLeague: {
+        type: String,
+        required: [true, 'Proszę wybrać ligę!'],
+        // enum: {
+        //     values: ['Premier League', 'Bundesliga', 'Serie A', 'Liga Santander'],
+        //     message: 'Błąd! Proszę wybrać: Premier League, Bundesliga, Serie A, Liga Santander'
+        // },
+    },
     description: {
         type: String,
         maxLength: [50, 'Maksymalna liczba znaków to 50!'],

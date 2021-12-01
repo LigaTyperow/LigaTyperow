@@ -69,9 +69,19 @@ class LeagueController {
         const { name } = req.params;        
     
         //wczytujemy dane z bd
-        const league = await League.findOne({ slug: name }).populate(['owner', 'players']);  
-        const matches = await Match.find({ leagueName: 'Bundesliga', status: 'SCHEDULED'});
-        const scores = await Score.find({ user: req.session.user._id }); //wczytujemy typy zalogowanego usera        
+        const league = await League.findOne({ slug: name }).populate(['owner', 'players']);
+
+        const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
+        const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
+
+        let scores; 
+        // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
+        if (req.session.user) {
+            //wczytujemy typy zalogowanego usera dla wyświetlanej ligi  
+            scores = await Score.find({ user: req.session.user._id, league: league }); 
+        } else {
+            // console.log('jako niezalogowany schowaj typowanie');
+        }        
     
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
@@ -81,6 +91,7 @@ class LeagueController {
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
             name: league?.name,
             description: league?.description,
+            selectedLeague: league?.selectedLeague,
             players: league?.players,
             playersCount: league?.playersCount,
             privacy: league?.privacy,
@@ -108,16 +119,23 @@ class LeagueController {
             });
     
             try {                                      
-                console.log('Zapisano!');
+                console.log('Zapisano TYPY!');
                 await score.save();  
-                
-                res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
             } catch (e) {
-                console.log('PROBLEM');
+                console.log('PROBLEM Z TYPOWANIEM');
                 console.log(e);
-                res.render('pages/leagues');
             }
-        });        
+        });    
+        
+        // Po wciśnięciu przycisku Wytypuj, odświeżamy stronę
+        try {            
+            console.log('TRY PO PĘTLI');
+            res.redirect(`/ligi/${name}`); 
+        } catch (e) {            
+            console.log('CATCH PO PĘTLI');
+            console.log(e);
+            // res.render('pages/leagues');
+        }
     }
 
     showCreateLeagueForm(req, res) {
@@ -132,6 +150,7 @@ class LeagueController {
         const league = new League({            
             name: req.body.name,
             description: req.body.description,
+            selectedLeague: req.body.selectedLeague,
             playersCount: req.body.playersCount || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
             privacy: req.body.privacy,
             code: req.body.code,
@@ -172,6 +191,7 @@ class LeagueController {
         //podmieniamy pola w bd
         league.name = req.body.name;
         league.description = req.body.description;
+        league.selectedLeague = req.body.selectedLeague,
         league.playersCount = req.body.playersCount;    
         league.privacy = req.body.privacy;    
         league.code = req.body.code;    
