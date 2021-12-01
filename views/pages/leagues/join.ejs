@@ -1,28 +1,36 @@
-<div class="container">
-    <h1>Dołącz do ligi</h1>
+<div class="bor-div">
+	<div class="container justify-content-center login-size text-center">
+		<h1>Dołącz do ligi</h1>
 
-    <form method="POST">
-        <div class="mb-3">
-            <label for="" class="form-label">Kod do ligi</label>
-            <input type="text" name="code" maxlength="30" value="<%= form.code %>"
-                class="form-control <%= errors?.code ? 'is-invalid' : '' %>" required>
-            <div class="form-next">Przynajmniej 3 znaki.</div>
-            <% if (errors?.code) { %>
-            <div class="invalid-feedback"><%= errors.code.message %></div>
-            <% } %>
-        </div>
+		<form method="POST">
+			<div class="mb-3">
+				<label for="" class="form-label">Kod do ligi</label>
+				<input
+					type="text"
+					name="code"
+					maxlength="30"
+					value="<%= form.code %>"
+					class="form-control <%= errors?.code ? 'is-invalid' : '' %>"
+					required
+				/>
+				<div class="form-next">Przynajmniej 3 znaki.</div>
+				<% if (errors?.code) { %>
+				<div class="invalid-feedback"><%= errors.code.message %></div>
+				<% } %>
+			</div>
 
-        <button class="btn btn-success">Dołącz</button>
-    </form>
+			<button class="btn btn-success">Dołącz</button>
+		</form>
 
-    <!-- powinno być " typeof errors !== 'undefined' ", ale mamy zmienną zdefiniowaną w view-middleware -->
-    <% if (errors) { %>
-        <div class="alert alert-danger mt-3 text-center">   
-            Błąd! Nieprawidłowy kod ligi, już do tej ligi należysz lub nie ma miejsc w tej lidze!
-        </div>
-    <% } else if (success) { %>
-        <div class="alert alert-success mt-3 text-center">   
-            Dodano!
-        </div>
-    <% } %>
+		<!-- powinno być " typeof errors !== 'undefined' ", ale mamy zmienną zdefiniowaną w view-middleware -->
+		<% if (errors) { %>
+		<div class="alert alert-danger mt-3 text-center">
+			Błąd! Nieprawidłowy kod ligi, już do tej ligi należysz lub nie ma miejsc w
+			tej lidze!
+		</div>
+		<% } else if (success) { %>
+		<div class="alert alert-success mt-3 text-center">Dodano!</div>
+		<% } %>
+	</div>
 </div>
+<div class="zap"></div>
