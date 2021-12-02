@@ -74,20 +74,27 @@ class LeagueController {
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
 
+        let resultsHeader = 'Wytypuj wyniki';
         let scores; 
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
             //wczytujemy typy zalogowanego usera dla wyświetlanej ligi  
             scores = await Score.find({ user: req.session.user._id, league: league }); 
+
+            //Jeśli istnieją wytypowane wyniki to zmień header h3
+            if (scores.length > 0) {
+                resultsHeader = 'Twoje TYPY';            
+            }                        
         } else {
-            // console.log('jako niezalogowany schowaj typowanie');
-        }        
-    
+            // console.log('dla niezalogowanego schowaj typowanie');
+        }     
+
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
             league,
             matches,
             scores,
+            resultsHeader,
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
             name: league?.name,
             description: league?.description,
@@ -103,13 +110,15 @@ class LeagueController {
     async betButton(req, res) {
         const { name } = req.params;
         const league = await League.findOne({ slug: name });
+        const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
 
         //pobieramy następną kolejkę
-        const matches = await Match.find({ leagueName: 'Bundesliga', status: 'SCHEDULED'});  
+        const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});  
         
         // TYPOWANIE
         matches.forEach(async (match, index) => {            
             const score = new Score({  
+                leagueName: selectedLeague,
                 homeTeam: match.homeTeam,
                 scoreHome: req.body.homeTeamScore[index] || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
                 awayTeam: match.awayTeam,
@@ -191,7 +200,6 @@ class LeagueController {
         //podmieniamy pola w bd
         league.name = req.body.name;
         league.description = req.body.description;
-        league.selectedLeague = req.body.selectedLeague,
         league.playersCount = req.body.playersCount;    
         league.privacy = req.body.privacy;    
         league.code = req.body.code;    

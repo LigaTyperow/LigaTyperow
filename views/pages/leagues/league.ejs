@@ -25,8 +25,8 @@
         <p><b>Maksymalna liczba graczy:</b> <%= playersCount %></p>        
         <p><b>Dostępność:</b> <%= privacy %></p>        
 
-        <!-- Jeśli liga jest prywatna to nie pokazuj kodu ligi -->
-        <% if (privacy == 'publiczna') { %>
+        <!-- Jeśli liga jest publiczna lub jestes wlascicielem ligi to pokaż kod -->
+        <% if (privacy == 'publiczna' || owner.nick == user.nick) { %>
             <p><b>Kod ligi:</b> <%= code %></p>
         <% } %>
 
@@ -37,14 +37,9 @@
 
             <!-- Sprawdzamy czy user należy do ligi, jeśli tak to może wytypować wyniki -->
             <% if (exist) { %> 
-                <% let betted=true %>
-                <form method="POST" class="text-center pb-5">
-                    <% if (!betted) { %> 
-                        <h3 class="pb-3">Wytypuj wyniki:</h3>
-                    <% } else { %> 
-                        <h3 class="pb-3">Twoje TYPY:</h3>
-                        <% betted=false %> 
-                    <% } %> 
+                <% let betted=false %>
+                <form method="POST" class="text-center pb-5">                    
+                    <h3><%= resultsHeader %></h3>
 
                     <% matches.forEach((match, index) => { %>
                         <div class="row mb-3">

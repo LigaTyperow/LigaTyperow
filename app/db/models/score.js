@@ -7,6 +7,9 @@ const { checkNumbers } = require('../validators'); //walidacje do konkretnych p√
 
 //Stworzenie modelu, na podstawie, kt√≥rego powstanie kolekcja
 const scoreSchema = new Schema({       
+    leagueName: {
+        type: String,
+    },
     homeTeam: {
         type: String,
     },

@@ -22,11 +22,7 @@ const leagueSchema = new Schema({
     },
     selectedLeague: {
         type: String,
-        required: [true, 'Proszę wybrać ligę!'],
-        // enum: {
-        //     values: ['Premier League', 'Bundesliga', 'Serie A', 'Liga Santander'],
-        //     message: 'Błąd! Proszę wybrać: Premier League, Bundesliga, Serie A, Liga Santander'
-        // },
+        required: [true, 'Proszę wybrać ligę!'],        
     },
     description: {
         type: String,
@@ -42,11 +38,6 @@ const leagueSchema = new Schema({
     privacy: {
         type: String,
         required: [true, 'Pole prywatności jest wymagane!'],
-        lowercase: true,
-        enum: {
-            values: ['publiczna', 'prywatna'],
-            message: 'Błąd! Proszę wybrać: publiczna lub prywatna.'
-        },
     },
     code: {
         type: String,
