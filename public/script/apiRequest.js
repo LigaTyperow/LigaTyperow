@@ -6,24 +6,28 @@ const personalToken = "06900aadf8064cdab4775b8b1c19db88"
 
 export const getDataForShedule = leagueName => {
     return fetch(`https://api.football-data.org/v2/competitions/${leagueName}/matches`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Auth-Token': personalToken
-    }}).then(resp => resp.json())
-    .catch((error) => {
-        alert("Wystąpił problem z danymi")
-        console.error('Error:', error);
-    });
+            headers: {
+                'Content-Type': 'application/json',             
+                'X-Auth-Token': personalToken
+            }
+        }).then(resp => resp.json())
+        .catch((error) => {
+            alert("Wystąpił problem z danymi")
+            console.error('Error:', error);
+        });
 }
 
 export const getDataForTable = leagueName => {
     return fetch(`https://api.football-data.org/v2/competitions/${leagueName}/standings`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Auth-Token': personalToken
-    }}).then(resp => resp.json())
-    .catch((error) => {
-        alert("Wystąpił problem z danymi")
-        console.error('Error:', error);
-    });
+            headers: {
+                'Content-Type': 'application/json',             
+                'X-Auth-Token': personalToken,
+            }
+                
+                
+        }).then(resp => resp.json())
+        .catch((error) => {
+            alert("Wystąpił problem z danymi")
+            console.error('Error:', error);
+        });
 }
