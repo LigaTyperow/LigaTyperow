@@ -34,7 +34,6 @@ const fetchAndDisplayData = () => {
     tableBody.innerHTML = ""
 
     getDataForShedule(leagueName).then(resp => {
-        console.log(resp);
         switchLeagueName();
         const fullSeasonMatches = resp.matches;
         const listOfFinishedMatches = createDOMElement('ul', 'list-group');
@@ -58,7 +57,6 @@ const fetchAndDisplayData = () => {
         
         getDataForTable(leagueName).then(resp => {
             const standingsTable = resp.standings[0].table;
-            console.log(standingsTable);
             if (viewElems.leagueTable.style.display = "none") {
                 viewElems.leagueTable.style.display = "initial"
             } else {
