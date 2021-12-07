@@ -11,21 +11,25 @@ const headers = {
 // const leagueNames = ["PL", "BL1", "SA", "PD"] // skróty nazw lig to pobierania danych
 const leagueObjects = [{
         leagueCode: "PL",
+        leagueName: "Premier League",
         currentMatchday: null
     },
 
     {
         leagueCode: "BL1",
+        leagueName: "Bundesliga",
         currentMatchday: null
     },
 
     {
         leagueCode: "SA",
+        leagueName: "Serie A",
         currentMatchday: null
     },
 
     {
         leagueCode: "PD",
+        leagueName: "Primera Division",
         currentMatchday: null
     }
 ]
@@ -45,6 +49,31 @@ async function getCurrentMatchday() {
             });
             console.log("########Pobrano currentMatchday z API########");
         })
+}
+
+async function postCurrentMatchday() {
+    //zapisujemy aktualną kolejkę danej ligi do DB
+    // leagueObjects.forEach(leagueObj => {
+    //     const leagueObject = new Match({
+    //         leagueName: leagueObj.leagueName, 
+    //         currentMatchday: leagueObj.currentMatchday,
+    //     });
+
+    //     try {
+    //         leagueObject.save();
+    //         console.log("########Zapisano currentMatchday do BD########");
+    //         // res.status(201); //dokument został utworzony
+    //     } catch (e) {
+    //         console.log('error');
+    //         // res.status(422).json({
+    //         //     errors: e.errors
+    //         // }); //coś jest niepoprawnego i informacje
+    //     }
+    // });
+
+    await axios.post('http://localhost:80/api/matches', {
+        leagueObjects,
+    })
 }
 
 async function getData(name, currentMatchday) {
@@ -71,7 +100,7 @@ async function getData(name, currentMatchday) {
         await axios.post('http://localhost:80/api/matches', {
             currentMatches,
             leagueName,
-            upcomingMatches
+            upcomingMatches,
         })
     } catch (error) {
         console.error(error);
@@ -103,7 +132,6 @@ async function ifDataExist() {
             gameweek: currentMatchday,
             leagueName: "Premier League"
         });
-        console.log(matches);
         let matchesFin = matches.every(match => match.status === "FINISHED");
         console.log(`matchesFin: ${matchesFin}`);
         if (matchesFin) {
@@ -143,6 +171,7 @@ async function ifDataExist() {
 async function loadData() {
     await getCurrentMatchday()
     await ifDataExist()
+    await postCurrentMatchday()
 }
 
 loadData()
