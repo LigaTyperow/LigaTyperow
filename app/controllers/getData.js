@@ -1,6 +1,7 @@
 //Pobieranie danych GET z API i POST jako obiekt do kontrolera
 const axios = require('axios');
 const Match = require('../db/models/match.js');
+const Score = require('../db/models/score.js');
 // const Gameweek = require('../db/models/gameweek.js');
 
 const headers = {
@@ -12,25 +13,29 @@ const headers = {
 const leagueObjects = [{
         leagueCode: "PL",
         leagueName: "Premier League",
-        currentMatchday: null
+        currentMatchday: null,
+        isUpdated: false
     },
 
     {
         leagueCode: "BL1",
         leagueName: "Bundesliga",
-        currentMatchday: null
+        currentMatchday: null,
+        isUpdated: false
     },
 
     {
         leagueCode: "SA",
         leagueName: "Serie A",
-        currentMatchday: null
+        currentMatchday: null,
+        isUpdated: false
     },
 
     {
         leagueCode: "PD",
         leagueName: "Liga Santander",
-        currentMatchday: null
+        currentMatchday: null,
+        isUpdated: false
     }
 ]
 
@@ -136,6 +141,8 @@ async function ifDataExist() {
             console.log(`matchesFin ${leagueObj.leagueName}: ${matchesFin}`);
             if (matchesFin) {
                 console.log(`Baza meczy ${leagueObj.leagueName} jest aktualna`);
+
+                leagueObj.isUpdated = false;
             } else {
                 //Usuwanie kolejki
                 await Match.deleteMany({
@@ -145,6 +152,8 @@ async function ifDataExist() {
                 //Dodawanie kolejki  
                 getData(leagueObj.leagueCode, leagueObj.currentMatchday);
                 console.log(`Zaktualizowano ligę ${leagueObj.leagueName}`);
+
+                leagueObj.isUpdated = true;
             }
         } else if (resultQuerySch) {
             //Jesli wszystkie mecze są scheduled to sprawdzamy:
@@ -157,7 +166,9 @@ async function ifDataExist() {
             console.log(`matchesSch ${leagueObj.leagueName}: ${matchesSch}`);
             if (matchesSch) {
                 console.log(`Baza meczy ${leagueObj.leagueName} jest aktualna`);
-            } else {   
+
+                leagueObj.isUpdated = false;
+            } else {
                 //Usuwanie kolejki             
                 await Match.deleteMany({
                     leagueName: leagueObj.leagueName
@@ -166,9 +177,74 @@ async function ifDataExist() {
                 //Dodawanie kolejki
                 getData(leagueObj.leagueCode, leagueObj.currentMatchday);
                 console.log(`Zaktualizowano ligę ${leagueObj.leagueName}`);
+
+                leagueObj.isUpdated = true;
             }
         } else {
             console.log(`Nie wszystkie mecze z kolejki mają ten sam status`);
+        }
+    });
+}
+
+async function addPoints() {
+    //sprawdzamy czy została zaktualizowana kolejka dla danej ligi
+    leagueObjects.forEach(async leagueObj => {
+        if (leagueObj.isUpdated) {
+            //mecze zakończone z wynikami do porownania z typami
+            const matches = await Match.find({
+                leagueName: leagueObj.leagueName,
+                status: 'FINISHED'
+            });
+
+            //typy użytkownika
+            const scores = await Score.find({
+                leagueName: leagueObj.leagueName,
+                gameweek: leagueObj.currentMatchday
+            });
+
+            matches.forEach(async match => {
+                //trzeba wyszukać ten sam mecz w tabeli Scores
+                let sameMatch = scores.filter(score => {                    
+
+                    //Porównujemy mecz z obu tabel
+                    if (score.homeTeam == match.homeTeam) {
+                        return score;
+                    }
+                });
+
+                let points = 0;
+
+                //Sprawdzamy czy wytypowano prawidłowy rezultat meczu
+                if ((sameMatch.homeScore > sameMatch.AwayScore &&
+                        match.scoreHomeTeam > match.scoreAwayTeam) ||
+                    (sameMatch.homeScore < sameMatch.AwayScore &&
+                        match.scoreHomeTeam < match.scoreAwayTeam) ||
+                    (sameMatch.homeScore == sameMatch.AwayScore &&
+                        match.scoreHomeTeam == match.scoreAwayTeam) ) 
+                {
+                    points = 1;
+                }
+
+                //Sprawdzamy czy wytypowano prawidłowy wynik meczu
+                if (sameMatch.scoreHome == match.scoreHomeTeam && sameMatch.scoreAway == match.scoreAwayTeam) {
+                    //do wzynaczania winnera trzeba bedzie uzyc czy znaki <>
+                    points += 2;
+                }
+
+                sameMatch.points = points;
+
+                console.log(sameMatch);
+                console.log(sameMatch.points);
+
+                try {
+                    await sameMatch.save();                               
+                } catch (e) {
+                    console.log('!!! Wykryto błąd z punktacją:')
+                    console.log(e)
+                }
+            });
+        } else {
+            //liga nie została zaktualizowana
         }
     });
 }
@@ -177,6 +253,7 @@ async function ifDataExist() {
 async function loadData() {
     await getCurrentMatchday()
     await ifDataExist()
+    await addPoints()
     // await postCurrentMatchday()
 }
 

@@ -10,6 +10,9 @@ const scoreSchema = new Schema({
     leagueName: {
         type: String,
     },
+    gameweek: {
+        type: String,
+    },
     homeTeam: {
         type: String,
     },
@@ -45,6 +48,9 @@ const scoreSchema = new Schema({
         // required: true,
         ref: 'User' 
     },
+    points: {
+        type: Number,
+    }
 });
 //##############################################################
 //Operacje po wpisaniu danych przez usera, na których możemy dokonać zmiany przed dodaniem do bd

@@ -74,7 +74,8 @@ class LeagueController {
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
 
-        let resultsHeader = 'Wytypuj wyniki';
+        let resultsHeader = `Wytypuj wyniki`;
+        let gameweekHeader = `Kolejka ${matches[0].gameweek}`;
         let scores; 
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
@@ -84,6 +85,7 @@ class LeagueController {
             //Jeśli istnieją wytypowane wyniki to zmień header h3
             if (scores.length > 0) {
                 resultsHeader = 'Twoje TYPY';            
+                gameweekHeader = `Kolejka ${scores[0].gameweek}`;            
             }                        
         } else {
             // console.log('dla niezalogowanego schowaj typowanie');
@@ -95,6 +97,7 @@ class LeagueController {
             matches,
             scores,
             resultsHeader,
+            gameweekHeader,
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
             name: league?.name,
             description: league?.description,
@@ -119,6 +122,7 @@ class LeagueController {
         matches.forEach(async (match, index) => {            
             const score = new Score({  
                 leagueName: selectedLeague,
+                gameweek: match.gameweek,
                 homeTeam: match.homeTeam,
                 scoreHome: req.body.homeTeamScore[index] || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
                 awayTeam: match.awayTeam,
@@ -137,11 +141,9 @@ class LeagueController {
         });    
         
         // Po wciśnięciu przycisku Wytypuj, odświeżamy stronę
-        try {            
-            console.log('TRY PO PĘTLI');
+        try { 
             res.redirect(`/ligi/${name}`); 
         } catch (e) {            
-            console.log('CATCH PO PĘTLI');
             console.log(e);
             // res.render('pages/leagues');
         }
