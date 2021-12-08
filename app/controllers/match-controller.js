@@ -1,4 +1,4 @@
-const Gameweek = require('../db/models/gameweek.js');
+// const Gameweek = require('../db/models/gameweek.js');
 const Match = require('../db/models/match.js');
 
 class MatchController {
@@ -20,25 +20,25 @@ class MatchController {
         const finishedMatches = req.body.currentMatches; //tablica obiektów - ukończone mecze
         const upcomingMatches = req.body.upcomingMatches; //tablica obiektów - nadchodzące mecze
         const leagueName = req.body.leagueName; //jedna wartość - nazwa ligi
-        const leagueObjects = req.body.leagueObjects;
-        console.log(req.body);
-        leagueObjects.forEach(leagueObj => {
-            const leagueObject = new Gameweek({
-                leagueName: leagueObj.leagueName, 
-                currentMatchday: leagueObj.currentMatchday,
-            });
+        // const leagueObjects = req.body.leagueObjects;
+        // console.log(req.body);
+        // leagueObjects.forEach(leagueObj => {
+        //     const leagueObject = new Gameweek({
+        //         leagueName: leagueObj.leagueName, 
+        //         currentMatchday: leagueObj.currentMatchday,
+        //     });
     
-            try {
-                leagueObject.save();
-                console.log("########Zapisano currentMatchday do BD########");
-                res.status(201); //dokument został utworzony
-            } catch (e) {
-                console.log('error');
-                res.status(422).json({
-                    errors: e.errors
-                }); //coś jest niepoprawnego i informacje
-            }
-        });
+        //     try {
+        //         leagueObject.save();
+        //         console.log("########Zapisano currentMatchday do BD########");
+        //         res.status(201); //dokument został utworzony
+        //     } catch (e) {
+        //         console.log('error');
+        //         res.status(422).json({
+        //             errors: e.errors
+        //         }); //coś jest niepoprawnego i informacje
+        //     }
+        // });
 
         finishedMatches.forEach(match => {
             const matchObject = new Match({
