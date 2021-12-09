@@ -193,7 +193,7 @@ async function addPoints() {
             //mecze zakończone z wynikami do porownania z typami
             const matches = await Match.find({
                 leagueName: leagueObj.leagueName,
-                status: 'SCHEDULED'
+                status: 'FINISHED'
             });
 
             //typy użytkownika
