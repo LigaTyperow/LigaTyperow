@@ -193,7 +193,7 @@ async function addPoints() {
             //mecze zakończone z wynikami do porownania z typami
             const matches = await Match.find({
                 leagueName: leagueObj.leagueName,
-                status: 'FINISHED'
+                status: 'SCHEDULED'
             });
 
             //typy użytkownika
@@ -203,25 +203,23 @@ async function addPoints() {
             });
 
             matches.forEach(async match => {
-                //trzeba wyszukać ten sam mecz w tabeli Scores
-                let sameMatch = scores.filter(score => {                    
 
-                    //Porównujemy mecz z obu tabel
-                    if (score.homeTeam == match.homeTeam) {
-                        return score;
+                //trzeba wyszukać ten sam mecz w tabeli Scores
+                let sameMatch = scores.find(element => {
+                    if (element.homeTeam === match.homeTeam) {
+                        return element.homeTeam;
                     }
                 });
-
+                // console.log(`ZNALEZIONY MECZ TO: ${sameMatch} === ${match}`);
                 let points = 0;
 
-                //Sprawdzamy czy wytypowano prawidłowy rezultat meczu
+                // Sprawdzamy czy wytypowano prawidłowy rezultat meczu
                 if ((sameMatch.homeScore > sameMatch.AwayScore &&
                         match.scoreHomeTeam > match.scoreAwayTeam) ||
                     (sameMatch.homeScore < sameMatch.AwayScore &&
                         match.scoreHomeTeam < match.scoreAwayTeam) ||
                     (sameMatch.homeScore == sameMatch.AwayScore &&
-                        match.scoreHomeTeam == match.scoreAwayTeam) ) 
-                {
+                        match.scoreHomeTeam == match.scoreAwayTeam)) {
                     points = 1;
                 }
 
@@ -233,11 +231,8 @@ async function addPoints() {
 
                 sameMatch.points = points;
 
-                console.log(sameMatch);
-                console.log(sameMatch.points);
-
                 try {
-                    await sameMatch.save();                               
+                    await sameMatch.save();
                 } catch (e) {
                     console.log('!!! Wykryto błąd z punktacją:')
                     console.log(e)
