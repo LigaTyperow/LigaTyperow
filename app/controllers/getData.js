@@ -86,6 +86,8 @@ async function getData(name, currentMatchday) {
             headers: headers
         }).then(resp => resp.data.matches)
 
+        //ABY COFNĄĆ DLA TESTU KOLEJKĘ WYŻEJ: parseInt(currentMatchday)-1 A NIŻEJ USUWASZ +
+
         const upcomingMatchday = parseInt(currentMatchday) + 1;
 
         //pobieramy mecze z następnej kolejki
@@ -123,6 +125,14 @@ async function ifDataExist() {
             }).then(resp => resp.data.matches)
 
         console.log(`Aktualna kolejka ${leagueObj.leagueName}: ${currentMatchday}`);
+
+        //Sprawdzamy czy jakiś mecz ma status POSTPONED
+        currentMatches.find(match => { 
+            if (match.status === "POSTPONED") {
+                match.status = "FINISHED";
+                // match.status = "SCHEDULED";
+            }
+        });        
 
         //Sprawdzamy czy WSZYSTKIE MECZE Z API W PL AKTUALNEJ KOLEJKI są ZAKOŃCZONE
         let resultQueryFin = currentMatches.every(match => match.status === "FINISHED");
@@ -247,6 +257,10 @@ async function addPoints() {
 //Najpierw musimy pobrać aktualną kolejkę...
 async function loadData() {
     await getCurrentMatchday()
+    //TESTOWANIE NA SZTYWNO
+        // leagueObjects.forEach(leagueObj => {
+        //     getData(leagueObj.leagueCode, leagueObj.currentMatchday)
+        // })
     await ifDataExist()
     await addPoints()
     // await postCurrentMatchday()
@@ -255,6 +269,6 @@ async function loadData() {
 loadData()
 
 // POST do bazy danych ostatniej i przyszłej kolejki
-// leagueNames.forEach(name => {
-//     getData(name)
+// leagueObjects.forEach(leagueObj => {
+//     getData(leagueObj.name, leagueObj.currentMatchday)
 // })
