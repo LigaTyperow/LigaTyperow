@@ -14,35 +14,35 @@ const leagueObjects = [{
         leagueCode: "PL",
         leagueName: "Premier League",
         currentMatchday: null,
-        isUpdated: false
+        isUpdated: null
     },
 
     {
         leagueCode: "BL1",
         leagueName: "Bundesliga",
         currentMatchday: null,
-        isUpdated: false
+        isUpdated: null
     },
 
     {
         leagueCode: "SA",
         leagueName: "Serie A",
         currentMatchday: null,
-        isUpdated: false
+        isUpdated: null
     },
 
     {
         leagueCode: "PD",
         leagueName: "Liga Santander",
         currentMatchday: null,
-        isUpdated: false
+        isUpdated: null
     }
 ]
 
 //Pobieramy aktualną kolejkę z API
 async function getCurrentMatchday() {
     //pobieramy aktualną kolejkę danej ligi
-    return await axios.get(`http://api.football-data.org/v2/competitions`, {
+    await axios.get(`http://api.football-data.org/v2/competitions`, {
             headers: headers
         })
         .then(resp => {
@@ -63,7 +63,7 @@ async function getData(name, currentMatchday) {
 
         //ABY COFNĄĆ DLA TESTU KOLEJKĘ WYŻEJ: parseInt(currentMatchday)-1 A NIŻEJ USUWASZ +
 
-        const upcomingMatchday = parseInt(currentMatchday) + 1;
+        const upcomingMatchday = parseInt(currentMatchday)+1;
 
         //pobieramy mecze z następnej kolejki
         const upcomingMatches = await axios.get(`https://api.football-data.org/v2/competitions/${name}/matches?matchday=${upcomingMatchday}`, {
@@ -90,8 +90,10 @@ async function getData(name, currentMatchday) {
 //Sprawdzamy czy trzeba zaktualizować mecze w bazie danych
 async function ifDataExist() {
     //W pętli sprawdzamy każdą ligę 
-    leagueObjects.forEach(async leagueObj => {
-        const currentMatchday = leagueObj.currentMatchday; //aktualna kolejka jest pobierana z obiektu z tablicy leagueObjects
+
+    for (const leagueObj of leagueObjects) {
+
+        const currentMatchday = leagueObj.currentMatchday ; //aktualna kolejka jest pobierana z obiektu z tablicy leagueObjects
 
         //Pobieramy z API aktualną kolejkę
         const currentMatches = await axios.get(
@@ -101,21 +103,13 @@ async function ifDataExist() {
 
         console.log(`Aktualna kolejka ${leagueObj.leagueName}: ${currentMatchday}`);
 
-        //Sprawdzamy czy jakiś mecz ma status POSTPONED
-        // currentMatches.find(match => { 
-        //     if (match.status === "POSTPONED") {
-
-        //         match.status = "FINISHED";
-        //         // match.status = "SCHEDULED";
-        //     }
-        // });  
-             
         //filtrujemy wyniki z api, tak by zostały tylko mecze Scheduled LUB Finished
-        const filteredMatches = currentMatches.filter(match => match.status === "FINISHED" ||  match.status === "SCHEDULED")
+        const filteredMatches = currentMatches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED")
+        
         //Sprawdzamy czy WSZYSTKIE MECZE Z API W PL AKTUALNEJ KOLEJKI są ZAKOŃCZONE
         let resultQueryFin = filteredMatches.every(match => match.status === "FINISHED");
         let resultQuerySch = filteredMatches.every(match => match.status === "SCHEDULED");
-        
+
         //Jesli wszystkie mecze są zakończone
         if (resultQueryFin) {
 
@@ -124,8 +118,12 @@ async function ifDataExist() {
                 gameweek: currentMatchday,
                 leagueName: leagueObj.leagueName
             });
-            let matchesFin = matches.every(match => match.status === "FINISHED");
+
+            //Filtruje matches, aby były tylko mecze finished albo scheduled ( omija np. postponed)
+            const filteredmatchesFin = matches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED")
+            let matchesFin = filteredmatchesFin.every(match => match.status === "FINISHED");
             console.log(`matchesFin ${leagueObj.leagueName}: ${matchesFin}`);
+            
             if (matchesFin) {
                 console.log(`Baza meczy ${leagueObj.leagueName} jest aktualna`);
 
@@ -149,8 +147,12 @@ async function ifDataExist() {
                 gameweek: currentMatchday,
                 leagueName: leagueObj.leagueName
             });
-            let matchesSch = matches.every(match => match.status === "SCHEDULED");
+
+            //Filtruje matches, aby były tylko mecze finished albo scheduled ( omija np. postponed)
+            const filteredmatchesSch = matches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED")
+            let matchesSch = filteredmatchesSch.every(match => match.status === "SCHEDULED");
             console.log(`matchesSch ${leagueObj.leagueName}: ${matchesSch}`);
+           
             if (matchesSch) {
                 console.log(`Baza meczy ${leagueObj.leagueName} jest aktualna`);
 
@@ -170,12 +172,13 @@ async function ifDataExist() {
         } else {
             console.log(`W lidze ${leagueObj.leagueName} nie wszystkie mecze z kolejki mają ten sam status`);
         }
-    });
+    }
 }
 
 async function addPoints() {
     //sprawdzamy czy została zaktualizowana kolejka dla danej ligi
-    leagueObjects.forEach(async leagueObj => {
+    for (const leagueObj of leagueObjects) {
+        console.log(`Status isUpdated ${leagueObj.isUpdated} dla ligi ${leagueObj.leagueName}`);
         if (leagueObj.isUpdated) {
             //mecze zakończone z wynikami do porownania z typami
             const matches = await Match.find({
@@ -189,8 +192,7 @@ async function addPoints() {
                 gameweek: leagueObj.currentMatchday
             });
 
-            matches.forEach(async match => {
-
+            for (const match of matches) {
                 //trzeba wyszukać ten sam mecz w tabeli Scores
                 let sameMatch = scores.find(element => {
                     if (element.homeTeam === match.homeTeam) {
@@ -201,17 +203,17 @@ async function addPoints() {
                 let points = 0;
 
                 // Sprawdzamy czy wytypowano prawidłowy rezultat meczu
-                if ((sameMatch.homeScore > sameMatch.AwayScore &&
+                if ((sameMatch.scoreHome > sameMatch.scoreAway &&
                         match.scoreHomeTeam > match.scoreAwayTeam) ||
-                    (sameMatch.homeScore < sameMatch.AwayScore &&
+                    (sameMatch.scoreHome < sameMatch.scoreAway &&
                         match.scoreHomeTeam < match.scoreAwayTeam) ||
-                    (sameMatch.homeScore == sameMatch.AwayScore &&
-                        match.scoreHomeTeam == match.scoreAwayTeam)) {
-                    points = 1;
+                    (sameMatch.scoreHome === sameMatch.scoreAway &&
+                        match.scoreHomeTeam === match.scoreAwayTeam)) {
+                    points += 1;
                 }
 
                 //Sprawdzamy czy wytypowano prawidłowy wynik meczu
-                if (sameMatch.scoreHome == match.scoreHomeTeam && sameMatch.scoreAway == match.scoreAwayTeam) {
+                if ((sameMatch.scoreHome == match.scoreHomeTeam) && (sameMatch.scoreAway == match.scoreAwayTeam)) {
                     //do wzynaczania winnera trzeba bedzie uzyc czy znaki <>
                     points += 2;
                 }
@@ -227,26 +229,25 @@ async function addPoints() {
                     console.log('!!! Wykryto błąd z punktacją:')
                     console.log(e)
                 }
-            });
+            };
         } else {
-            //liga nie została zaktualizowana
+            console.log("Liga nie została zaktualizowana");
         }
-    });
+    }
 }
 
 //Najpierw musimy pobrać aktualną kolejkę...
 async function loadData() {
     await getCurrentMatchday()
-    //TESTOWANIE NA SZTYWNO
-        // leagueObjects.forEach(leagueObj => {
-        //     getData(leagueObj.leagueCode, leagueObj.currentMatchday)
-        // })
+    // //TESTOWANIE NA SZTYWNO
+    //     // leagueObjects.forEach(leagueObj => {
+    //     //     getData(leagueObj.leagueCode, leagueObj.currentMatchday)
+    //     // })
     await ifDataExist()
     await addPoints()
-    // await postCurrentMatchday()
 }
-
 loadData()
+
 
 // POST do bazy danych ostatniej i przyszłej kolejki
 // leagueObjects.forEach(leagueObj => {
