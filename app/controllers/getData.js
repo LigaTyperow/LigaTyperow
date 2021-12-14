@@ -53,31 +53,6 @@ async function getCurrentMatchday() {
         })
 }
 
-// async function postCurrentMatchday() {
-//     zapisujemy aktualną kolejkę danej ligi do DB
-//     leagueObjects.forEach(leagueObj => {
-//         const leagueObject = new Match({
-//             leagueName: leagueObj.leagueName, 
-//             currentMatchday: leagueObj.currentMatchday,
-//         });
-
-//         try {
-//             leagueObject.save();
-//             console.log("########Zapisano currentMatchday do BD########");
-//             // res.status(201); //dokument został utworzony
-//         } catch (e) {
-//             console.log('error');
-//             // res.status(422).json({
-//             //     errors: e.errors
-//             // }); //coś jest niepoprawnego i informacje
-//         }
-//     });
-
-//     await axios.post('http://localhost:80/api/matches', {
-//         leagueObjects,
-//     })
-// }
-
 //Pobieramy mecze konkretnych kolejek dla konkretnych lig
 async function getData(name, currentMatchday) {
     try {
@@ -127,18 +102,20 @@ async function ifDataExist() {
         console.log(`Aktualna kolejka ${leagueObj.leagueName}: ${currentMatchday}`);
 
         //Sprawdzamy czy jakiś mecz ma status POSTPONED
-        currentMatches.find(match => { 
-            if (match.status === "POSTPONED") {
-                match.status = "FINISHED";
-                // match.status = "SCHEDULED";
-            }
-        });        
+        // currentMatches.find(match => { 
+        //     if (match.status === "POSTPONED") {
 
+        //         match.status = "FINISHED";
+        //         // match.status = "SCHEDULED";
+        //     }
+        // });  
+             
+        //filtrujemy wyniki z api, tak by zostały tylko mecze Scheduled LUB Finished
+        const filteredMatches = currentMatches.filter(match => match.status === "FINISHED" ||  match.status === "SCHEDULED")
         //Sprawdzamy czy WSZYSTKIE MECZE Z API W PL AKTUALNEJ KOLEJKI są ZAKOŃCZONE
-        let resultQueryFin = currentMatches.every(match => match.status === "FINISHED");
-        let resultQuerySch = currentMatches.every(match => match.status === "SCHEDULED");
-
-
+        let resultQueryFin = filteredMatches.every(match => match.status === "FINISHED");
+        let resultQuerySch = filteredMatches.every(match => match.status === "SCHEDULED");
+        
         //Jesli wszystkie mecze są zakończone
         if (resultQueryFin) {
 
@@ -191,7 +168,7 @@ async function ifDataExist() {
                 leagueObj.isUpdated = true;
             }
         } else {
-            console.log(`Nie wszystkie mecze z kolejki mają ten sam status`);
+            console.log(`W lidze ${leagueObj.leagueName} nie wszystkie mecze z kolejki mają ten sam status`);
         }
     });
 }
@@ -241,8 +218,11 @@ async function addPoints() {
 
                 sameMatch.points = points;
 
+
                 try {
                     await sameMatch.save();
+                    console.log("Przydzielono punkty za typowanie");
+
                 } catch (e) {
                     console.log('!!! Wykryto błąd z punktacją:')
                     console.log(e)
