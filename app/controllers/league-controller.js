@@ -300,7 +300,7 @@ class LeagueController {
         //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
             //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
         if (league.players.includes(req.session.user._id)) {            
-            league.players.pull(req.session.user._id); //dołączenie do tablicy graczy 
+            league.players.pull(req.session.user._id); //opuszczanie tablicy graczy 
 
             try {      
                 await league.save();

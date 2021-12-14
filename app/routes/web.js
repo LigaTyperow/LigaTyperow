@@ -10,6 +10,10 @@ const LeagueController = require('../controllers/league-controller');
 // STRONA GŁÓWNA
 router.get('/', PageController.showHome);
 
+// TABELA I TERMINARZ
+router.get('/terminarz', PageController.showSchedule);
+router.get('/tabela', PageController.showTable);
+
 // REJESTRACJA
 router.get('/zarejestruj', UserController.showRegister); // wyświetlanie formularza
 router.post('/zarejestruj', UserController.register); // obsługa rejestracji
