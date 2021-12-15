@@ -32,6 +32,36 @@
 
         <p><b>Właściciel ligi:</b> <%= owner.nick %></p>
 
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nick</th>
+                <th scope="col">Punkty</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% for(const [index, player]  of players.entries()){ %>
+                <%let userPoints=0;%>                
+                    <tr>
+                        <th scope="row"><%=index%></th>
+                        <td><%= player.nick %></td>
+                        <% console.log(`Player id: ${player._id}`); %>
+                        <% for(const score of scores){ %>
+                            <% console.log(`Score id: ${score.user._id}`); %>
+                             
+                            <%if(score.user._id == player._id){%>  
+                                    <%console.log("weszlo")%>             
+                                    <%userPoints += score.points%>
+                            <%};%>                              
+                        <%};%>
+                        
+                        <td><%=userPoints%></td>     
+                    </tr>
+              <% }; %>
+            </tbody>
+          </table>
+
         <!-- Sprawdzamy czy user jest zalogowany -->
         <% if (user) { %> 
 
@@ -47,8 +77,8 @@
                             <div class="col-4">
                                 <label for="form-label" class="">  
                                     <!-- Jeśli user już wytypował wyniki to ustaw betted=true -->
-                                    <% if (scores[index]?.homeTeam) { %>
-                                        <%= scores[index].homeTeam %>
+                                    <% if (singleScore[index]?.homeTeam) { %>
+                                        <%= singleScore[index].homeTeam %>
                                         <% betted=true %> 
                                     <% } else { %> 
                                         <%= match.homeTeam %>
@@ -59,7 +89,7 @@
                                 <input type="number" 
                                 name="homeTeamScore" 
                                 min="0" max="20" 
-                                value="<%= scores[index]?.scoreHome ? scores[index].scoreHome : 0 %>"
+                                value="<%= singleScore[index]?.scoreHome ? singleScore[index].scoreHome : 0 %>"
                                 class="form-control" required> 
                                 <!-- value: Jeśli są wytypowane wyniki to pokaż wynik, a jak nie to domyślnie 0 -->                                
                             </div>
@@ -70,12 +100,12 @@
                                 <input type="number" 
                                 name="awayTeamScore" 
                                 min="0" max="20"
-                                value="<%= scores[index]?.scoreAway ? scores[index].scoreAway : 0 %>"
+                                value="<%= singleScore[index]?.scoreAway ? singleScore[index].scoreAway : 0 %>"
                                 class="form-control" required> 
                             </div>                                    
                             <div class="col-4">
                                 <label for="form-label" class="">
-                                    <%= scores[index]?.awayTeam ? scores[index].awayTeam : match.awayTeam %>
+                                    <%= singleScore[index]?.awayTeam ? singleScore[index].awayTeam : match.awayTeam %>
                                 </label>
                             </div>           
                         </div>

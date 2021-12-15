@@ -73,19 +73,19 @@ class LeagueController {
 
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
-        console.log(matches);
         let resultsHeader = `Wytypuj wyniki`;
         let gameweekHeader = `Kolejka ${matches[0].gameweek}`;
-        let scores; 
+        let singleScore; 
+        let scores = await Score.find();
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
             //wczytujemy typy zalogowanego usera dla wyświetlanej ligi  
-            scores = await Score.find({ user: req.session.user._id, league: league }); 
+            singleScore = await Score.find({ user: req.session.user._id, league: league }); 
 
             //Jeśli istnieją wytypowane wyniki to zmień header h3
-            if (scores.length > 0) {
+            if (singleScore.length > 0) {
                 resultsHeader = 'Twoje TYPY';            
-                gameweekHeader = `Kolejka ${scores[0].gameweek}`;            
+                gameweekHeader = `Kolejka ${singleScore[0].gameweek}`;            
             }                        
         } else {
             // console.log('dla niezalogowanego schowaj typowanie');
@@ -95,6 +95,7 @@ class LeagueController {
         res.render('pages/leagues/league', { 
             league,
             matches,
+            singleScore,
             scores,
             resultsHeader,
             gameweekHeader,
