@@ -71,9 +71,37 @@ class LeagueController {
         //wczytujemy dane z bd
         const league = await League.findOne({ slug: name }).populate(['owner', 'players']);
         
-        //wczytujemy konkretną ligę typowania do wyświetlenia rankingu
-        const scores = await Score.find({ league: league._id }).populate(['user']);
+        // RANKING #######################################################
+            //wczytujemy konkretną ligę typowania do wyświetlenia rankingu
+            const scores = await Score.find({ league: league._id }).populate(['user']);
 
+            //Tablica obiektów dla każdego gracza, aby zliczyć punkty i posortować od najlepszego
+            let playerObjects = []; 
+            for (const player of league.players) {    
+                let playerObj = {
+                    playerNick: player.nick,
+                    playerPoints: 0
+                }
+
+                let userPoints = 0; //Suma punktów z każdego typu
+
+                for (const score of scores) {       
+                    // Podliczanie punktów dla konkretnego gracza
+                    if (score.user.nick == player.nick) {
+                        userPoints += score.points;
+                    }
+                }
+
+                // Przypisanie zsumowanych pkt do obiektu konkretnego gracza
+                playerObj.playerPoints = userPoints;
+                playerObjects.push(playerObj);
+            }
+
+            // Sortowanie graczy od najlepszego
+            playerObjects.sort((a, b) => (a.playerPoints > b.playerPoints) ? -1 : 1)        
+        // ###############################################################
+        
+        // MECZE DO TYPOWANIA LUB WYTYPOWANE WYNIKI
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
         let resultsHeader = `Wytypuj wyniki`;
@@ -96,9 +124,10 @@ class LeagueController {
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
             league,
+            scores,
+            playerObjects,
             matches,
             singleScore,
-            scores,
             resultsHeader,
             gameweekHeader,
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
@@ -113,6 +142,7 @@ class LeagueController {
         });
     }
 
+    // TYPOWANIE
     async betButton(req, res) {
         const { name } = req.params;
         const league = await League.findOne({ slug: name });
