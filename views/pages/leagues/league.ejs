@@ -42,7 +42,7 @@
                     <h3><%= resultsHeader %></h3>
                     <h6><%= gameweekHeader %></h6>
 
-                    <% matches.forEach((match, index) => { %>
+                    <% for(const [index, match]  of matches.entries()){ %>
                         <div class="row mb-3">
                             <div class="col-4">
                                 <label for="form-label" class="">  
@@ -79,7 +79,7 @@
                                 </label>
                             </div>           
                         </div>
-                    <% }); %>
+                    <% }; %>
 
                     <!-- Jeśli user już wytypował to schowaj przycisk -->
                     <% if (!betted) { %> 

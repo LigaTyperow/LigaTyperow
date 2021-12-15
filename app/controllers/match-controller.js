@@ -3,17 +3,17 @@ const Match = require('../db/models/match.js');
 const Score = require('../db/models/score.js');
 
 class MatchController {
-    async showMatches(req, res) {        
+    async showMatches(req, res) {
         const matches = await Match.find(); //wyświetlanie kolekcji z meczami
         res.status(200).json(matches); //parsuje dane na JSON
         /* Status 200 to wszystko OK - więcej statusów => kody odpowiedzi HTTP
         201 Create - tworzenie nowych dokumentów
         202 Accepted - dane zostały zaakceptowane
         204 No content - wszystko poszło w porządku, ale żadne dane nie są zwracane (przy usuwaniu)
-        400 to Bad Request */    
+        400 to Bad Request */
     }
 
-    postMatches(req, res) {
+    async postMatches(req, res) {
         //x-www-form-urlencoded - dodawanie danych przez formularz
         //raw - w czystej postaci        
 
@@ -22,9 +22,9 @@ class MatchController {
         const upcomingMatches = req.body.upcomingMatches; //tablica obiektów - nadchodzące mecze
         const leagueName = req.body.leagueName; //jedna wartość - nazwa ligi          
 
-        finishedMatches.forEach(match => {
+        for (const match of finishedMatches) {
             const matchObject = new Match({
-                leagueName: leagueName, 
+                leagueName: leagueName,
                 date: match.utcDate.slice(0, 10),
                 gameweek: match.matchday,
                 awayTeam: match.awayTeam.name,
@@ -36,7 +36,7 @@ class MatchController {
 
             try {
                 //console.log(matchObject); 
-                matchObject.save();
+                await matchObject.save();
                 res.status(201); //dokument został utworzony
             } catch (e) {
                 console.log('error');
@@ -44,11 +44,11 @@ class MatchController {
                     errors: e.errors
                 }); //coś jest niepoprawnego i informacje
             }
-        });
+        }
 
-        upcomingMatches.forEach(match => {
+        for (const match of upcomingMatches) {
             const matchObject = new Match({
-                leagueName: leagueName, 
+                leagueName: leagueName,
                 date: match.utcDate.slice(0, 10),
                 gameweek: match.matchday,
                 awayTeam: match.awayTeam.name,
@@ -60,7 +60,7 @@ class MatchController {
 
             try {
                 //console.log(matchObject); 
-                matchObject.save();
+                await matchObject.save();
                 res.status(201); //dokument został utworzony
             } catch (e) {
                 console.log('error');
@@ -68,7 +68,7 @@ class MatchController {
                     errors: e.errors
                 }); //coś jest niepoprawnego i informacje
             }
-       });
+        }
     };
 }
 

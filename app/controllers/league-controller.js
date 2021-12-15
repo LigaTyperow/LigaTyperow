@@ -73,7 +73,7 @@ class LeagueController {
 
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
-
+        console.log(matches);
         let resultsHeader = `Wytypuj wyniki`;
         let gameweekHeader = `Kolejka ${matches[0].gameweek}`;
         let scores; 
@@ -119,7 +119,7 @@ class LeagueController {
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});  
         
         // TYPOWANIE
-        matches.forEach(async (match, index) => {            
+        for(const [index, match]  of matches.entries()){
             const score = new Score({  
                 leagueName: selectedLeague,
                 gameweek: match.gameweek,
@@ -138,7 +138,7 @@ class LeagueController {
                 console.log('PROBLEM Z TYPOWANIEM');
                 console.log(e);
             }
-        });    
+        }   
         
         // Po wciśnięciu przycisku Wytypuj, odświeżamy stronę
         try { 
@@ -300,7 +300,7 @@ class LeagueController {
         //Po stronie backendu też powinniśmy sprawdzać czy user należy już do ligi
             //jeśli w tablicy obiektów players istnieje id zalogowanego usera to... 
         if (league.players.includes(req.session.user._id)) {            
-            league.players.pull(req.session.user._id); //opuszczanie tablicy graczy 
+            league.players.pull(req.session.user._id); //dołączenie do tablicy graczy 
 
             try {      
                 await league.save();

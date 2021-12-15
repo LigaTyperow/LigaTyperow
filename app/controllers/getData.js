@@ -10,7 +10,8 @@ const headers = {
 }
 
 // const leagueNames = ["PL", "BL1", "SA", "PD"] // skróty nazw lig to pobierania danych
-const leagueObjects = [{
+const leagueObjects = [
+    {
         leagueCode: "PL",
         leagueName: "Premier League",
         currentMatchday: null,
