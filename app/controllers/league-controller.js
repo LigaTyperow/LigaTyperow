@@ -70,13 +70,15 @@ class LeagueController {
     
         //wczytujemy dane z bd
         const league = await League.findOne({ slug: name }).populate(['owner', 'players']);
+        
+        //wczytujemy konkretną ligę typowania do wyświetlenia rankingu
+        const scores = await Score.find({ league: league._id }).populate(['user']);
 
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
         let resultsHeader = `Wytypuj wyniki`;
         let gameweekHeader = `Kolejka ${matches[0].gameweek}`;
         let singleScore; 
-        let scores = await Score.find();
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
             //wczytujemy typy zalogowanego usera dla wyświetlanej ligi  

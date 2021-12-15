@@ -42,21 +42,20 @@
             </thead>
             <tbody>
                 <% for(const [index, player]  of players.entries()){ %>
-                <%let userPoints=0;%>                
+                    <!-- Suma punktów z każdego typu -->
+                    <% let userPoints = 0 %>                
                     <tr>
-                        <th scope="row"><%=index%></th>
-                        <td><%= player.nick %></td>
-                        <% console.log(`Player id: ${player._id}`); %>
-                        <% for(const score of scores){ %>
-                            <% console.log(`Score id: ${score.user._id}`); %>
-                             
-                            <%if(score.user._id == player._id){%>  
-                                    <%console.log("weszlo")%>             
-                                    <%userPoints += score.points%>
-                            <%};%>                              
+                        <th scope="row"><%= index + 1 %></th>
+                        <td><%= player.nick %></td>                        
+                        
+                        <% for(const score of scores){ %>                            
+                            <!-- Podliczanie punktów dla konkretnego gracza -->
+                            <% if(score.user.nick == player.nick) { %>                                              
+                                <% userPoints += score.points %>
+                            <% }; %>                              
                         <%};%>
                         
-                        <td><%=userPoints%></td>     
+                        <td><%= userPoints %></td>     
                     </tr>
               <% }; %>
             </tbody>
