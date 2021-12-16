@@ -25,7 +25,7 @@ class MatchController {
         for (const match of finishedMatches) {
             const matchObject = new Match({
                 leagueName: leagueName,
-                date: match.utcDate.slice(0, 10),
+                date: match.utcDate,
                 gameweek: match.matchday,
                 awayTeam: match.awayTeam.name,
                 homeTeam: match.homeTeam.name,
@@ -49,7 +49,8 @@ class MatchController {
         for (const match of upcomingMatches) {
             const matchObject = new Match({
                 leagueName: leagueName,
-                date: match.utcDate.slice(0, 10),
+                // date: match.utcDate.slice(0, 10),
+                date: match.utcDate,
                 gameweek: match.matchday,
                 awayTeam: match.awayTeam.name,
                 homeTeam: match.homeTeam.name,

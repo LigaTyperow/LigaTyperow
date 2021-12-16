@@ -84,10 +84,11 @@ class LeagueController {
                 }
 
                 let userPoints = 0; //Suma punktów z każdego typu
-
-                for (const score of scores) {       
+                console.log(league);
+                for (const score of scores) {      
                     // Podliczanie punktów dla konkretnego gracza
                     if (score.user.nick == player.nick) {
+                        if(score.points >= 0)
                         userPoints += score.points;
                     }
                 }
@@ -96,9 +97,9 @@ class LeagueController {
                 playerObj.playerPoints = userPoints;
                 playerObjects.push(playerObj);
             }
-
             // Sortowanie graczy od najlepszego
-            playerObjects.sort((a, b) => (a.playerPoints > b.playerPoints) ? -1 : 1)        
+            playerObjects.sort((a, b) => (a.playerPoints > b.playerPoints) ? -1 : 1)  
+            console.log(playerObjects)      
         // ###############################################################
         
         // MECZE DO TYPOWANIA LUB WYTYPOWANE WYNIKI
