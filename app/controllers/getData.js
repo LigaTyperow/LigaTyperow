@@ -131,14 +131,17 @@ async function ifDataExist() {
         // Potrzebujemy datę zakończenia meczu, więc do godziny rozpoczęcia meczu dodajemy 2h
         lastMatchDate.setHours(lastMatchDate.getHours() + 2); 
 
+        let resultQueryFin;
+        let resultQuerySch;
+
         //Sprawdzamy czy ostatni mecz kolejki już się odbył   
         if (nowDate > lastMatchDate) {          
             //filtrujemy mecze z API, tak by zostały tylko mecze SCHEDULED LUB FINISHED
             const filteredMatches = currentMatches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED");
             
             //Sprawdzamy czy pobrane mecze z API są FINISHED lub SCHEDULED
-            let resultQueryFin = filteredMatches.every(match => match.status === "FINISHED");
-            let resultQuerySch = filteredMatches.every(match => match.status === "SCHEDULED");
+            resultQueryFin = filteredMatches.every(match => match.status === "FINISHED");
+            resultQuerySch = filteredMatches.every(match => match.status === "SCHEDULED");
             
             console.log(`Ostatni mecz w ${leagueObj.leagueName} już się odbył`);
         } else {
@@ -217,49 +220,51 @@ async function addPoints() {
     //sprawdzamy czy została zaktualizowana kolejka dla danej ligi
     for (const leagueObj of leagueObjects) {
         console.log(`Status isUpdated ${leagueObj.isUpdated} dla ligi ${leagueObj.leagueName}`);
-        if (leagueObj.isUpdated) {
+        if (leagueObj.isUpdated) {    
             //mecze zakończone z wynikami do porownania z typami
             const matches = await Match.find({
                 leagueName: leagueObj.leagueName,
-                status: 'FINISHED'
+                gameweek: leagueObj.currentMatchday
+                // status: 'FINISHED'
             });
-
+            // console.log(`Mecze do porównania: ${matches}`)
+            
             //typy użytkownika
             const scores = await Score.find({
                 leagueName: leagueObj.leagueName,
                 gameweek: leagueObj.currentMatchday
-            });
+            }); 
 
-            for (const match of matches) {
-                //trzeba wyszukać ten sam mecz w tabeli Scores
-                let sameMatch = scores.find(element => {
-                    if (element.homeTeam === match.homeTeam) {
-                        return element.homeTeam;
+            // Musimy przejść po wszystkich wynikach
+            for (const score of scores) {
+                //trzeba wyszukać ten sam mecz w tabeli Matches
+                let sameMatch = matches.find(element => {
+                    if (score.homeTeam === element.homeTeam) {
+                        return score.homeTeam;
                     }
                 });
-                // console.log(`ZNALEZIONY MECZ TO: ${sameMatch} === ${match}`);
+                // console.log(`ZNALEZIONY MECZ TO: ${sameMatch} === ${score}`);
                 let points = 0;
 
                 // Sprawdzamy czy wytypowano prawidłowy rezultat meczu
-                if ((sameMatch.scoreHome > sameMatch.scoreAway &&
-                        match.scoreHomeTeam > match.scoreAwayTeam) ||
-                    (sameMatch.scoreHome < sameMatch.scoreAway &&
-                        match.scoreHomeTeam < match.scoreAwayTeam) ||
-                    (sameMatch.scoreHome === sameMatch.scoreAway &&
-                        match.scoreHomeTeam === match.scoreAwayTeam)) {
+                if ((score.scoreHome > score.scoreAway &&
+                        sameMatch.scoreHomeTeam > sameMatch.scoreAwayTeam) ||
+                    (score.scoreHome < score.scoreAway &&
+                        sameMatch.scoreHomeTeam < sameMatch.scoreAwayTeam) ||
+                    (score.scoreHome === score.scoreAway &&
+                        sameMatch.scoreHomeTeam === sameMatch.scoreAwayTeam)) {
                     points += 1;
                 }
 
                 //Sprawdzamy czy wytypowano prawidłowy wynik meczu
-                if ((sameMatch.scoreHome == match.scoreHomeTeam) && (sameMatch.scoreAway == match.scoreAwayTeam)) {
-                    //do wzynaczania winnera trzeba bedzie uzyc czy znaki <>
+                if ((score.scoreHome == sameMatch.scoreHomeTeam) && (score.scoreAway == sameMatch.scoreAwayTeam)) {                    
                     points += 2;
                 }
 
-                sameMatch.points = points;
+                score.points = points;
 
                 try {
-                    await sameMatch.save();
+                    await score.save();
                     console.log("Przydzielono punkty za typowanie");
                 } catch (e) {
                     console.log('!!! Wykryto błąd z punktacją:')
@@ -280,7 +285,8 @@ async function loadData() {
         //     getData(leagueObj.leagueCode, leagueObj.currentMatchday)
         // })
     await ifDataExist()
-    await addPoints()
+    setTimeout(() => { addPoints() }, 10000);
+    // await addPoints()
 }
 
 loadData()
