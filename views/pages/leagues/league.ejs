@@ -26,8 +26,16 @@
         <p><b>Dostępność:</b> <%= privacy %></p>        
 
         <!-- Jeśli liga jest publiczna lub jestes wlascicielem ligi to pokaż kod -->
-        <% if (privacy == 'publiczna' || owner.nick == user.nick) { %>
+        <% if (privacy == 'publiczna') { %>
             <p><b>Kod ligi:</b> <%= code %></p>
+        <% } else { %>
+            <!-- Sprawdzamy czy user jest zalogowany -->
+            <% if (user) { %>
+                <!-- Jeśli liga jest prywatna, a zalogowany user to wlasciciel ligi to pokaz kod -->
+                <% if (owner.nick == user.nick) { %>
+                    <p><b>Kod ligi:</b> <%= code %></p>
+                <% } %>
+            <% } %>
         <% } %>
 
         <p><b>Właściciel ligi:</b> <%= owner.nick %></p>
@@ -60,57 +68,122 @@
 
             <!-- Sprawdzamy czy user należy do ligi, jeśli tak to może wytypować wyniki -->
             <% if (exist) { %> 
-                <% let betted=false %>
-                <form method="POST" class="text-center pb-5">                    
+                <div class="text-center pb-3">
                     <h3><%= resultsHeader %></h3>
-                    <h6><%= gameweekHeader %></h6>
+                    <h6>Kolejka <%= gameweekHeader %></h6>
+                </div>
+                
+                <% let betted=false %>
+                <!-- Jeśli user już wytypował wyniki to ustaw betted=true -->
+                <% if (userScores.length > 0) { %>
+                    <% betted=true %>
+                <% } %>  
 
-                    <% for(const [index, match]  of matches.entries()){ %>
-                        <div class="row mb-3">
-                            <div class="col-4">
-                                <label for="form-label" class="">  
-                                    <!-- Jeśli user już wytypował wyniki to ustaw betted=true -->
-                                    <% if (singleScore[index]?.homeTeam) { %>
-                                        <%= singleScore[index].homeTeam %>
-                                        <% betted=true %> 
-                                    <% } else { %> 
-                                        <%= match.homeTeam %>
-                                    <% } %> 
-                                </label>
+                <!-- Jeśli user jeszcze nie typował to pokazujemy mecze do wytypowania -->
+                <!-- Jeśli wytypował to pokazujemy wytypowane wyniki -->
+                <% if (!betted) { %> 
+                    <form method="POST" class="text-center pb-5">    
+                        <% for (const match of matches) { %>
+                            <div class="row mb-3 pb-2">
+                                <div class="col-2">godzina</div>
+                                <div class="col-2">
+                                    <label for="form-label"><%= match.homeTeam %></label>
+                                </div>
+                                <div class="col-1">
+                                    <input type="number" 
+                                    name="homeTeamScore" 
+                                    min="0" max="20" 
+                                    value="0"
+                                    class="form-control" required> 
+                                    <!-- value: Domyślnie każdy wynik to 0:0 -->                                
+                                </div>
+    
+                                <div class="col-2">:</div>
+    
+                                <div class="col-1">
+                                    <input type="number" 
+                                    name="awayTeamScore" 
+                                    min="0" max="20"
+                                    value="0"
+                                    class="form-control" required> 
+                                </div>                                    
+                                <div class="col-2">
+                                    <label for="form-label"><%= match.awayTeam %></label>
+                                </div>    
+                                <div class="col-2"><!-- Dla równego odstępu --></div>       
                             </div>
-                            <div class="col-1">
-                                <input type="number" 
-                                name="homeTeamScore" 
-                                min="0" max="20" 
-                                value="<%= singleScore[index]?.scoreHome ? singleScore[index].scoreHome : 0 %>"
-                                class="form-control" required> 
-                                <!-- value: Jeśli są wytypowane wyniki to pokaż wynik, a jak nie to domyślnie 0 -->                                
-                            </div>
+                        <% }; %>
+                        
+                        <button class="btn btn-success">Wytypuj</button>                    
+                    </form>
+                <% } else { %>
+                    <div class="text-center pb-5">
+                        <% for (const userScore of userScores) { %>
+                            <div class="row mb-3 pb-2">
+                                <div class="col-2">godzina</div>
+                                <div class="col-2">
+                                    <label for="form-label"><%= userScore.homeTeam %></label>
+                                </div>
+                                <div class="col-1">
+                                    <input type="number"                                 
+                                    placeholder="<%= userScore.scoreHome %>"
+                                    class="form-control" disabled> 
+                                    <!-- value: Jeśli są wytypowane wyniki to pokaż wynik -->                                
+                                </div>
+            
+                                <div class="col-2">:</div>
+            
+                                <div class="col-1">
+                                    <input type="number"                                 
+                                    placeholder="<%= userScore.scoreAway %>"
+                                    class="form-control" disabled> 
+                                </div>                                    
+                                <div class="col-2">
+                                    <label for="form-label"><%= userScore.awayTeam %></label>
+                                </div>   
+                                <div class="col-2"><!-- Dla równego odstępu --></div>     
+                            </div>    
+                        <% }; %>
+                    </div>
+                <% } %>
+                
+                <!-- Sprawdzamy czy jest wytypowana kolejka wcześniejsza, aby pokazać jakie mecze zostały trafione -->
+                <% if (historyScores.length > 0) { %>
+                    <div class="text-center pb-3">
+                        <h3>Wcześniejsze typy</h3>
+                        <h6>Kolejka <%= parseInt(gameweekHeader) - 1 %></h6>
+                    </div>
 
-                            <div class="col-2">:</div>
-
-                            <div class="col-1">
-                                <input type="number" 
-                                name="awayTeamScore" 
-                                min="0" max="20"
-                                value="<%= singleScore[index]?.scoreAway ? singleScore[index].scoreAway : 0 %>"
-                                class="form-control" required> 
-                            </div>                                    
-                            <div class="col-4">
-                                <label for="form-label" class="">
-                                    <%= singleScore[index]?.awayTeam ? singleScore[index].awayTeam : match.awayTeam %>
-                                </label>
-                            </div>           
-                        </div>
-                    <% }; %>
-
-                    <!-- Jeśli user już wytypował to schowaj przycisk -->
-                    <% if (!betted) { %> 
-                        <button class="btn btn-success">Wytypuj</button>
-                    <% } %>  
-                </form>
+                    <div class="text-center pb-5">
+                        <% for (const historyScore of historyScores) { %>
+                            <div class="row mb-3 pb-2">
+                                <div class="col-2">godzina</div>
+                                <div class="col-2">
+                                    <label for="form-label"><%= historyScore.homeTeam %></label>
+                                </div>
+                                <div class="col-1">
+                                    <input type="number"                                 
+                                    placeholder="<%= historyScore.scoreHome %>"
+                                    class="form-control" disabled> 
+                                    <!-- value: Jeśli są wytypowane wyniki to pokaż wynik -->                                
+                                </div>
+            
+                                <div class="col-2">:</div>
+            
+                                <div class="col-1">
+                                    <input type="number"                                 
+                                    placeholder="<%= historyScore.scoreAway %>"
+                                    class="form-control" disabled> 
+                                </div>                                    
+                                <div class="col-2">
+                                    <label for="form-label"><%= historyScore.awayTeam %></label>
+                                </div>   
+                                <div class="col-2">wynik</div>        
+                            </div>    
+                        <% }; %>
+                    </div>
+                <% } %>
             <% } %>     
-
         <% } %> 
     <% } else { %>
         <h1>Nie ma takiej ligi!</h1>

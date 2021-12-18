@@ -108,18 +108,22 @@ class LeagueController {
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
         let resultsHeader = `Wytypuj wyniki`;
-        let gameweekHeader = `Kolejka ${matches[0].gameweek}`;
-        let singleScore; 
+        let gameweekHeader = matches[0].gameweek;
+        let userScores, historyScores; 
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
             //wczytujemy typy zalogowanego usera dla wyświetlanej ligi  
-            singleScore = await Score.find({ user: req.session.user._id, league: league }); 
-
+            userScores = await Score.find({ user: req.session.user._id, league: league, gameweek: matches[0].gameweek }); 
+            
             //Jeśli istnieją wytypowane wyniki to zmień header h3
-            if (singleScore.length > 0) {
-                resultsHeader = 'Twoje TYPY';            
-                gameweekHeader = `Kolejka ${singleScore[0].gameweek}`;            
-            }                        
+            if (userScores.length > 0) {
+                resultsHeader = 'Twoje typy';            
+                gameweekHeader = userScores[0].gameweek;            
+            }       
+            
+            //wczytujemy wytypowaną kolejke wcześniejszą, aby pokazać jakie mecze zostały trafione
+            let earlierGameweek = parseInt(matches[0].gameweek) - 1;            
+            historyScores = await Score.find({ user: req.session.user._id, league: league, gameweek: earlierGameweek });            
         } else {
             // console.log('dla niezalogowanego schowaj typowanie');
         }     
@@ -130,7 +134,8 @@ class LeagueController {
             scores,
             playerObjects,
             matches,
-            singleScore,
+            userScores,
+            historyScores,
             resultsHeader,
             gameweekHeader,
             title: league?.name ?? 'Brak wyników',  //Wyświetl nazwe ligi lub gdy taka nie istnieje to "brak"
