@@ -10,6 +10,9 @@ const scoreSchema = new Schema({
     leagueName: {
         type: String,
     },
+    date: {
+        type: String,
+    },
     gameweek: {
         type: String,
     },

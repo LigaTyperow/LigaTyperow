@@ -82,10 +82,17 @@
                 <!-- Jeśli user jeszcze nie typował to pokazujemy mecze do wytypowania -->
                 <!-- Jeśli wytypował to pokazujemy wytypowane wyniki -->
                 <% if (!betted) { %> 
+                    <% let date, month, day, hours, mins; %>
                     <form method="POST" class="text-center pb-5">    
                         <% for (const match of matches) { %>
                             <div class="row mb-3 pb-2">
-                                <div class="col-2">godzina</div>
+                                <%  date = match.date;
+                                    month = date.slice(5, 7);
+                                    day = date.slice(8, 10);
+                                    hours = parseInt(date.slice(11, 13)) + 1;
+                                    mins = date.slice(14, 16);
+                                    date = `${month}.${day} ${hours}:${mins}`; %>
+                                <div class="col-2"><%= date %></div>
                                 <div class="col-2">
                                     <label for="form-label"><%= match.homeTeam %></label>
                                 </div>
@@ -117,10 +124,17 @@
                         <button class="btn btn-success">Wytypuj</button>                    
                     </form>
                 <% } else { %>
+                    <% let date, month, day, hours, mins; %>
                     <div class="text-center pb-5">
                         <% for (const userScore of userScores) { %>
                             <div class="row mb-3 pb-2">
-                                <div class="col-2">godzina</div>
+                                <%  date = userScore.date;
+                                    month = date.slice(5, 7);
+                                    day = date.slice(8, 10);
+                                    hours = parseInt(date.slice(11, 13)) + 1;
+                                    mins = date.slice(14, 16);
+                                    date = `${month}.${day} ${hours}:${mins}`; %>
+                                <div class="col-2"><%= date %></div>
                                 <div class="col-2">
                                     <label for="form-label"><%= userScore.homeTeam %></label>
                                 </div>
@@ -154,10 +168,17 @@
                         <h6>Kolejka <%= parseInt(gameweekHeader) - 1 %></h6>
                     </div>
 
+                    <% let date, month, day, hours, mins; %>
                     <div class="text-center pb-5">
                         <% for (const historyScore of historyScores) { %>
                             <div class="row mb-3 pb-2">
-                                <div class="col-2">godzina</div>
+                                <%  date = historyScore.date;
+                                    month = date.slice(5, 7);
+                                    day = date.slice(8, 10);
+                                    hours = parseInt(date.slice(11, 13)) + 1;
+                                    mins = date.slice(14, 16);
+                                    date = `${month}.${day} ${hours}:${mins}`; %>
+                                <div class="col-2"><%= date %></div>
                                 <div class="col-2">
                                     <label for="form-label"><%= historyScore.homeTeam %></label>
                                 </div>

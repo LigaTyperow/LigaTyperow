@@ -163,6 +163,7 @@ class LeagueController {
         for(const [index, match]  of matches.entries()){
             const score = new Score({  
                 leagueName: selectedLeague,
+                date: match.date,
                 gameweek: match.gameweek,
                 homeTeam: match.homeTeam,
                 scoreHome: req.body.homeTeamScore[index] || undefined, //jeśli będzie pusty input to zostanie nadana wartość defaultowa, bez tego warunku zostanie nadana wartość "null"
