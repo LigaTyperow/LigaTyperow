@@ -8,15 +8,10 @@ class PageController {
         });
     }
 
-    showSchedule(req, res) {    
-        res.render('pages/schedule', {
-            title: 'Terminarz'
-        });
-    }
-
-    showTable(req, res) {    
-        res.render('pages/table', {
-            title: 'Tabela'
+    //tabela i terminarz
+    showStatistics(req, res) {    
+        res.render('pages/statistics', {
+            title: 'Statystyki'
         });
     }
 
