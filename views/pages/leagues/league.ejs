@@ -84,7 +84,7 @@
                 <% if (!betted) { %> 
                     <% let date, month, day, hours, mins; %>
                     <form method="POST" class="text-center pb-5">    
-                        <% for (const match of matches) { %>
+                        <% for (const match of matchesSch) { %>
                             <div class="row mb-3 pb-2">
                                 <%  date = match.date;
                                     month = date.slice(5, 7);
@@ -199,7 +199,24 @@
                                 <div class="col-2">
                                     <label for="form-label"><%= historyScore.awayTeam %></label>
                                 </div>   
-                                <div class="col-2">wynik</div>        
+                                <div class="col-2">
+                                    <!-- trzeba wyszukać ten sam mecz w tabeli Matches -->
+                                    <% let sameMatch = matchesFin.find(element => {
+                                        if (historyScore.homeTeam === element.homeTeam) {
+                                            return historyScore.homeTeam;
+                                        }
+                                    }); %>
+
+                                    <!-- pokazanie jakim wynikiem skończył się mecz -->
+                                    <!-- prawidłowo wytypowany wynik będzie zielony -->
+                                    <% if ((historyScore.scoreHome === sameMatch?.scoreHomeTeam) &&
+                                           (historyScore.scoreAway === sameMatch?.scoreAwayTeam)) { %>
+                                        <b class="text-white bg-success rounded-pill p-2"><%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %></b>
+                                    <% } else { %>
+                                        <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
+                                    <% } %>
+
+                                </div>        
                             </div>    
                         <% }; %>
                     </div>

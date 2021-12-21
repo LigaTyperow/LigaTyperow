@@ -106,14 +106,17 @@ class LeagueController {
         
         // MECZE DO TYPOWANIA LUB WYTYPOWANE WYNIKI
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
-        const matches = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
+        const matchesSch = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
+        const matchesFin = await Match.find({ leagueName: selectedLeague, status: 'FINISHED'});
+        
         let resultsHeader = `Wytypuj wyniki`;
-        let gameweekHeader = matches[0].gameweek;
+        let gameweekHeader = matchesSch[0].gameweek;
         let userScores, historyScores; 
+
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
             //wczytujemy typy zalogowanego usera dla wyświetlanej ligi  
-            userScores = await Score.find({ user: req.session.user._id, league: league, gameweek: matches[0].gameweek }); 
+            userScores = await Score.find({ user: req.session.user._id, league: league, gameweek: matchesSch[0].gameweek }); 
             
             //Jeśli istnieją wytypowane wyniki to zmień header h3
             if (userScores.length > 0) {
@@ -122,7 +125,7 @@ class LeagueController {
             }       
             
             //wczytujemy wytypowaną kolejke wcześniejszą, aby pokazać jakie mecze zostały trafione
-            let earlierGameweek = parseInt(matches[0].gameweek) - 1;            
+            let earlierGameweek = parseInt(matchesSch[0].gameweek) - 1;            
             historyScores = await Score.find({ user: req.session.user._id, league: league, gameweek: earlierGameweek });            
         } else {
             // console.log('dla niezalogowanego schowaj typowanie');
@@ -133,7 +136,8 @@ class LeagueController {
             league,
             scores,
             playerObjects,
-            matches,
+            matchesSch,
+            matchesFin,
             userScores,
             historyScores,
             resultsHeader,
