@@ -40,20 +40,6 @@ const leagueObjects = [
     }
 ]
 
-//Pobieramy aktualną kolejkę z API
-// async function getCurrentMatchday() {
-//     //pobieramy aktualną kolejkę danej ligi
-//     await axios.get(`http://api.football-data.org/v2/competitions`, {
-//             headers: headers
-//         })
-//         .then(resp => {
-//             // index = resp.data.competitions.indexOf(leagueObj);
-//             leagueObjects.forEach(leagueObj => {
-//                 leagueObj.currentMatchday = resp.data.competitions.find(league => league.code === leagueObj.leagueCode).currentSeason.currentMatchday;
-//             });
-//         })
-// }
-
 //Pobieramy aktualną kolejkę z bazy
 async function getCurrentMatchday() {
     //pobieramy aktualną kolejkę danej ligi
@@ -110,18 +96,11 @@ async function ifDataExist() {
         const currentMatchday = leagueObj.currentMatchday; //aktualna kolejka jest pobierana z obiektu z tablicy leagueObjects
     
         const nowDate = new Date();
-        // const lastAPIMatchDate = currentMatches[currentMatches.length-1].utcDate
          
         const nextGameweekMatches = await Match.find({                     
             leagueName: leagueObj.leagueName,
             status: "SCHEDULED"
         });
-
-        //Pobieramy z API aktualną kolejkę
-        const currentMatches = await axios.get(
-            `https://api.football-data.org/v2/competitions/${leagueObj.leagueCode}/matches?matchday=${currentMatchday}`, {
-                headers: headers
-            }).then(resp => resp.data.matches)
 
         console.log(`Aktualna kolejka ${leagueObj.leagueName}: ${currentMatchday}`);  
 
@@ -131,88 +110,24 @@ async function ifDataExist() {
         // Potrzebujemy datę zakończenia meczu, więc do godziny rozpoczęcia meczu dodajemy 2h
         lastMatchDate.setHours(lastMatchDate.getHours() + 2); 
 
-        let resultQueryFin;
-        let resultQuerySch;
-
-        //Sprawdzamy czy ostatni mecz kolejki już się odbył   
-        if (nowDate > lastMatchDate) {          
-            //filtrujemy mecze z API, tak by zostały tylko mecze SCHEDULED LUB FINISHED
-            const filteredMatches = currentMatches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED");
-            
-            //Sprawdzamy czy pobrane mecze z API są FINISHED lub SCHEDULED
-            resultQueryFin = filteredMatches.every(match => match.status === "FINISHED");
-            resultQuerySch = filteredMatches.every(match => match.status === "SCHEDULED");
-            
-            console.log(`Ostatni mecz w ${leagueObj.leagueName} już się odbył`);
-        } else {
-            console.log(`Ostatni mecz w ${leagueObj.leagueName} jeszcze się nie odbył`);
-        }
-
         //Jesli wszystkie mecze są zakończone
-        if (resultQueryFin) {
-
-            //Tak samo w BD trzeba sprawdzić czy wszystkie mecze są FINISHED, jeśli tak to nic nie zmieniaj
-            const matches = await Match.find({
-                // gameweek: currentMatchday,
-                gameweek: currentMatchday,
+        if (nowDate > lastMatchDate) {
+           
+            await Match.deleteMany({
                 leagueName: leagueObj.leagueName
             });
 
-            //Filtruje matches, aby były tylko mecze finished albo scheduled ( omija np. postponed)
-            const filteredMatchesFin = matches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED")
-            let matchesFin = filteredMatchesFin.every(match => match.status === "FINISHED");
-            console.log(`matchesFin ${leagueObj.leagueName}: ${matchesFin}`);
-            
-            if (matchesFin) {
-                console.log(`Baza meczy ${leagueObj.leagueName} jest aktualna`);
+            //Dodawanie kolejki  
+            getData(leagueObj.leagueCode, currentMatchday);
+            console.log(`Zaktualizowano ligę ${leagueObj.leagueName}`);
 
-                leagueObj.isUpdated = false;
-            } else {
-                //Usuwanie kolejki
-                await Match.deleteMany({
-                    leagueName: leagueObj.leagueName
-                });
-
-                //Dodawanie kolejki  
-                // getData(leagueObj.leagueCode, leagueObj.currentMatchday);
-                getData(leagueObj.leagueCode, currentMatchday);
-                console.log(`Zaktualizowano ligę ${leagueObj.leagueName}`);
-
-                leagueObj.isUpdated = true;
-            }
-        } else if (resultQuerySch) {
+            leagueObj.isUpdated = true;           
+        } else {
             //Jesli wszystkie mecze są scheduled to sprawdzamy:
             //Tak samo w BD trzeba sprawdzić czy wszystkie mecze są SCHEDULED, jeśli tak to nic nie zmieniaj
-            const matches = await Match.find({
-                // gameweek: currentMatchday,
-                gameweek: currentMatchday,
-                leagueName: leagueObj.leagueName
-            });
-
-            //Filtruje matches, aby były tylko mecze finished albo scheduled ( omija np. postponed)
-            const filteredmatchesSch = matches.filter(match => match.status === "FINISHED" || match.status === "SCHEDULED")
-            let matchesSch = filteredmatchesSch.every(match => match.status === "SCHEDULED");
-            console.log(`matchesSch ${leagueObj.leagueName}: ${matchesSch}`);
-           
-            if (matchesSch) {
-                console.log(`Baza meczy ${leagueObj.leagueName} jest aktualna`);
-
-                leagueObj.isUpdated = false;
-            } else {
-                //Usuwanie kolejki             
-                await Match.deleteMany({
-                    leagueName: leagueObj.leagueName
-                });
-
-                //Dodawanie kolejki
-                getData(leagueObj.leagueCode, currentMatchday);
-                console.log(`Zaktualizowano ligę ${leagueObj.leagueName}`);
-
-                leagueObj.isUpdated = true;
-            }
-        } else {
-            console.log(`W lidze ${leagueObj.leagueName} nie wszystkie mecze z kolejki mają ten sam status`);
-        }
+            console.log(`W lidze ${leagueObj.leagueName} ostatni mecz się jeszcze nie skonczyl`);
+            leagueObj.isUpdated = false;
+        } 
     }
 }
 
@@ -227,7 +142,6 @@ async function addPoints() {
                 gameweek: leagueObj.currentMatchday
                 // status: 'FINISHED'
             });
-            // console.log(`Mecze do porównania: ${matches}`)
             
             //typy użytkownika
             const scores = await Score.find({
@@ -286,12 +200,6 @@ async function loadData() {
         // })
     await ifDataExist()
     setTimeout(() => { addPoints() }, 10000);
-    // await addPoints()
 }
 
 loadData()
-
-// POST do bazy danych ostatniej i przyszłej kolejki
-// leagueObjects.forEach(leagueObj => {
-//     getData(leagueObj.name, leagueObj.currentMatchday)
-// })
