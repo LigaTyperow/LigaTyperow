@@ -56,7 +56,9 @@
                         <tr>
                             <th scope="row"><%= index + 1 %></th>
                             <td><%= playerObj.playerNick %></td>    
-                            <td><%= playerObj.playerPoints %></td>   
+                            <td>
+                                <%= playerObj.playerAllPoints %> (<b class="text-success">+<%= playerObj.playerGWpoints %></b>)
+                            </td>   
                         </tr>
                     <% }; %>
                 </tbody>

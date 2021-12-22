@@ -71,39 +71,6 @@ class LeagueController {
         //wczytujemy dane z bd
         const league = await League.findOne({ slug: name }).populate(['owner', 'players']);
         
-        // RANKING #######################################################
-            //wczytujemy konkretną ligę typowania do wyświetlenia rankingu
-            const scores = await Score.find({ league: league._id }).populate(['user']);
-
-            //Tablica obiektów dla każdego gracza, aby zliczyć punkty i posortować od najlepszego
-            let playerObjects = []; 
-            for (const player of league.players) {    
-                let playerObj = {
-                    playerNick: player.nick,
-                    playerPoints: 0
-                }
-
-                let userPoints = 0; //Suma punktów z każdego typu
-                
-                for (const score of scores) {      
-                    // Podliczanie punktów dla konkretnego gracza
-                    if (score.user.nick == player.nick) {
-                        // Sprawdzenie czy player coś typował
-                        if (score.points >= 0) {
-                            userPoints += score.points;
-                        }
-                    }
-                }
-
-                // Przypisanie zsumowanych pkt do obiektu konkretnego gracza
-                playerObj.playerPoints = userPoints;
-                playerObjects.push(playerObj);
-            }
-            // Sortowanie graczy od najlepszego
-            playerObjects.sort((a, b) => (a.playerPoints > b.playerPoints) ? -1 : 1)  
-                  
-        // ###############################################################
-        
         // MECZE DO TYPOWANIA LUB WYTYPOWANE WYNIKI
         const selectedLeague = league.selectedLeague; //przypisanie wybranej ligi piłkarskiej do ligi typowania
         const matchesSch = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
@@ -111,6 +78,7 @@ class LeagueController {
         
         let resultsHeader = `Wytypuj wyniki`;
         let gameweekHeader = matchesSch[0].gameweek;
+        let earlierGameweek = matchesFin[0].gameweek; //wczytujemy wcześniej wytypowaną kolejke
         let userScores, historyScores; 
 
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
@@ -124,12 +92,61 @@ class LeagueController {
                 gameweekHeader = userScores[0].gameweek;            
             }       
             
-            //wczytujemy wytypowaną kolejke wcześniejszą, aby pokazać jakie mecze zostały trafione
-            let earlierGameweek = parseInt(matchesSch[0].gameweek) - 1;            
+            //wczytujemy wytypowaną kolejke wcześniejszą, aby pokazać jakie mecze zostały trafione                      
             historyScores = await Score.find({ user: req.session.user._id, league: league, gameweek: earlierGameweek });            
         } else {
             // console.log('dla niezalogowanego schowaj typowanie');
         }     
+
+        // RANKING #######################################################
+            //wczytujemy wszystkie wyniki dla konkretnej ligi typowania do wyświetlenia rankingu
+            const scores = await Score.find({ league: league._id }).populate(['user']);
+            
+            //wczytujemy wyniki z ostatniej kolejki
+            const lastScores = await Score.find({ league: league._id, gameweek: earlierGameweek }).populate(['user']);
+
+            //Tablica obiektów dla każdego gracza, aby zliczyć punkty i posortować od najlepszego
+            let playerObjects = []; 
+            for (const player of league.players) {    
+                let playerObj = {
+                    playerNick: player.nick,
+                    playerGWpoints: 0,
+                    playerAllPoints: 0
+                }
+
+                let userGWpoints = 0; //Suma punktów z ostatniej kolejki
+                let userAllPoints = 0; //Suma punktów z każdego typu
+                
+                //Zliczanie wszystkich punktów danego gracza
+                for (const score of scores) {      
+                    // Podliczanie punktów dla konkretnego gracza
+                    if (score.user.nick == player.nick) {
+                        // Sprawdzenie czy player coś typował
+                        if (score.points >= 0) {
+                            userAllPoints += score.points;
+                        }
+                    }
+                }
+
+                //Zliczanie punktów z ostatniej kolejki danego gracza
+                for (const score of lastScores) {
+                    // Podliczanie punktów dla konkretnego gracza
+                    if (score.user.nick == player.nick) {
+                        // Sprawdzenie czy player coś typował
+                        if (score.points >= 0) {
+                            userGWpoints += score.points;
+                        }
+                    }
+                }
+
+                // Przypisanie zsumowanych pkt do obiektu konkretnego gracza
+                playerObj.playerGWpoints = userGWpoints;
+                playerObj.playerAllPoints = userAllPoints;
+                playerObjects.push(playerObj);
+            }
+            // Sortowanie graczy od najlepszego
+            playerObjects.sort((a, b) => (a.playerAllPoints > b.playerAllPoints) ? -1 : 1)                    
+        // ###############################################################
 
         //Widok league.ejs, { parametry, które chcemy przesłać }
         res.render('pages/leagues/league', { 
