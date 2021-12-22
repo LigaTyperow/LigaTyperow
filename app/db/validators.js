@@ -12,11 +12,6 @@ module.exports = {
         const re = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
         return re.test(password);
     },
-    
-    // checkDuration(duration) {
-    //     const re = /^[0-9\-]+$/;
-    //     return re.test(duration);
-    // },
 
     checkNumbers(score) {
         const re = /^[0-9]+$/;
