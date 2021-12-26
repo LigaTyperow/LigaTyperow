@@ -94,32 +94,32 @@
                                     hours = parseInt(date.slice(11, 13)) + 1;
                                     mins = date.slice(14, 16);
                                     date = `${day}.${month} ${hours}:${mins}`; %>
-                                <div class="col-2"><%= date %></div>
-                                <div class="col-2">
+                                <div class="col-12 col-md-2"><%= date %></div>
+                                <div class="col-3 col-md-2">
                                     <label for="form-label"><%= match.homeTeam %></label>
                                 </div>
-                                <div class="col-1">
+                                <div class="col-2 col-md-1">
                                     <input type="number" 
                                     name="homeTeamScore" 
                                     min="0" max="20" 
                                     value="0"
-                                    class="form-control" required> 
+                                    class="form-control form-control p-1 p-md-2 w-75" required> 
                                     <!-- value: Domyślnie każdy wynik to 0:0 -->                                
                                 </div>
     
-                                <div class="col-2">:</div>
+                                <div class="col-2 col-md-2">:</div>
     
-                                <div class="col-1">
+                                <div class="col-2 col-md-1">
                                     <input type="number" 
                                     name="awayTeamScore" 
                                     min="0" max="20"
                                     value="0"
-                                    class="form-control" required> 
+                                    class="form-control form-control p-1 p-md-2 w-75" required> 
                                 </div>                                    
-                                <div class="col-2">
+                                <div class="col-3 col-md-2">
                                     <label for="form-label"><%= match.awayTeam %></label>
                                 </div>    
-                                <div class="col-2"><!-- Dla równego odstępu --></div>       
+                                <div class="col-12 col-md-2 mb-4"><!-- Dla równego odstępu --></div>       
                             </div>
                         <% }; %>
                         
@@ -136,28 +136,28 @@
                                     hours = parseInt(date.slice(11, 13)) + 1;
                                     mins = date.slice(14, 16);
                                     date = `${day}.${month} ${hours}:${mins}`; %>
-                                <div class="col-2"><%= date %></div>
-                                <div class="col-2">
+                                <div class="col-12 col-md-2"><%= date %></div>
+                                <div class="col-3 col-md-2">
                                     <label for="form-label"><%= userScore.homeTeam %></label>
                                 </div>
-                                <div class="col-1">
+                                <div class="col-2 col-md-1">
                                     <input type="number"                                 
                                     placeholder="<%= userScore.scoreHome %>"
-                                    class="form-control" disabled> 
+                                    class="form-control p-1 p-md-2 w-75" disabled> 
                                     <!-- value: Jeśli są wytypowane wyniki to pokaż wynik -->                                
                                 </div>
             
-                                <div class="col-2">:</div>
+                                <div class="col-2 col-md-2">:</div>
             
-                                <div class="col-1">
+                                <div class="col-2 col-md-1">
                                     <input type="number"                                 
                                     placeholder="<%= userScore.scoreAway %>"
-                                    class="form-control" disabled> 
+                                    class="form-control p-1 p-md-2 w-75" disabled> 
                                 </div>                                    
-                                <div class="col-2">
+                                <div class="col-3 col-md-2">
                                     <label for="form-label"><%= userScore.awayTeam %></label>
                                 </div>   
-                                <div class="col-2"><!-- Dla równego odstępu --></div>     
+                                <div class="col-12 col-md-2 mb-4"><!-- Dla równego odstępu --></div>     
                             </div>    
                         <% }; %>
                     </div>
@@ -180,28 +180,28 @@
                                     hours = parseInt(date.slice(11, 13)) + 1;
                                     mins = date.slice(14, 16);
                                     date = `${day}.${month} ${hours}:${mins}`; %>
-                                <div class="col-2"><%= date %></div>
-                                <div class="col-2">
+                                <div class="col-12 col-md-2"><%= date %></div>
+                                <div class="col-3 col-md-2">
                                     <label for="form-label"><%= historyScore.homeTeam %></label>
                                 </div>
-                                <div class="col-1">
+                                <div class="col-2 col-md-1">
                                     <input type="number"                                 
                                     placeholder="<%= historyScore.scoreHome %>"
-                                    class="form-control" disabled> 
+                                    class="form-control p-1 p-md-2 w-75" disabled> 
                                     <!-- value: Jeśli są wytypowane wyniki to pokaż wynik -->                                
                                 </div>
             
-                                <div class="col-2">:</div>
+                                <div class="col-2 col-md-2">:</div>
             
-                                <div class="col-1">
+                                <div class="col-2 col-md-1">
                                     <input type="number"                                 
                                     placeholder="<%= historyScore.scoreAway %>"
-                                    class="form-control" disabled> 
+                                    class="form-control p-1 p-md-2 w-75" disabled> 
                                 </div>                                    
-                                <div class="col-2">
+                                <div class="col-3 col-md-2">
                                     <label for="form-label"><%= historyScore.awayTeam %></label>
                                 </div>   
-                                <div class="col-2">
+                                <div class="col-12 col-md-2 mb-4">
                                     <!-- trzeba wyszukać ten sam mecz w tabeli Matches -->
                                     <% let sameMatch = matchesFin.find(element => {
                                         if (historyScore.homeTeam === element.homeTeam) {
@@ -209,11 +209,23 @@
                                         }
                                     }); %>
 
-                                    <!-- pokazanie jakim wynikiem skończył się mecz -->
-                                    <!-- prawidłowo wytypowany wynik będzie zielony -->
+                                    <!-- pokazanie jakim wynikiem skończył się mecz -->                                    
                                     <% if ((historyScore.scoreHome === sameMatch?.scoreHomeTeam) &&
                                            (historyScore.scoreAway === sameMatch?.scoreAwayTeam)) { %>
-                                        <b class="text-white bg-success rounded-pill p-2"><%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %></b>
+                                        <!-- prawidłowo wytypowany wynik będzie zielony -->
+                                        <b class="text-white bg-success rounded-pill p-2"
+                                           data-bs-toggle="tooltip" data-bs-placement="right" title="Wynik trafiony!">
+                                            <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
+                                        </b>
+                                    <% } else if (
+                                        (historyScore.scoreHome > historyScore.scoreAway && sameMatch?.scoreHomeTeam > sameMatch?.scoreAwayTeam) ||
+                                        (historyScore.scoreHome < historyScore.scoreAway && sameMatch?.scoreHomeTeam < sameMatch?.scoreAwayTeam) ||
+                                        (historyScore.scoreHome === historyScore.scoreAway && sameMatch?.scoreHomeTeam === sameMatch?.scoreAwayTeam)) { %>
+                                            <!-- prawidłowo wytypowany rezultat będzie jaśniej zielony -->
+                                            <b class="text-white rounded-pill p-2" style="background-color: #66ff66;"
+                                           data-bs-toggle="tooltip" data-bs-placement="right" title="Rezultat trafiony!">
+                                            <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
+                                        </b>
                                     <% } else { %>
                                         <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
                                     <% } %>

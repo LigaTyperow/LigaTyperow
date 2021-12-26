@@ -22,10 +22,8 @@
         a.addEventListener('click', changePage);
     });
 
-// dodawanie readOnly inputs w league.ejs
-// document.getElementsByName('homeTeamScore').forEach(element => {
-//     element.disabled=true;
-// });
-// document.getElementsByName('awayTeamScore').forEach(element => {
-//     element.disabled=true;
-// });
+// dodawanie tooltip dla trafionych wyników league.ejs
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
