@@ -127,9 +127,17 @@
                                 <div class="col-12 col-md-2 mb-4"><!-- Dla równego odstępu --></div>       
                             </div>
                         <% }; %>
-                        
-                        <button class="btn btn-success">Wytypuj</button>                    
-                    </form>
+
+                        <!-- Sprawdzenie czy pierwszy mecz już się rozpoczął -->
+                        <% if (firstMatchNotStarted) { %>
+                            <button class="btn btn-success">Wytypuj</button>    
+                        <% } else { %>   
+                            <div class="alert alert-danger mt-3 text-center">
+                                Niestety spóźniłeś się! Pierwszy mecz dla tej kolejki już się zaczął!
+                            </div>
+                        <% } %>    
+
+                        </form>
                 <% } else { %>
                     <% let date, month, day, hours, mins; %>
                     <div class="text-center pb-5">

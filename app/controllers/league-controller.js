@@ -76,10 +76,18 @@ class LeagueController {
         const matchesSch = await Match.find({ leagueName: selectedLeague, status: 'SCHEDULED'});
         const matchesFin = await Match.find({ leagueName: selectedLeague, status: 'FINISHED'});
         
+        let userScores, historyScores; 
         let resultsHeader = `Wytypuj wyniki`;
         let gameweekHeader = matchesSch[0].gameweek;
         let earlierGameweek = matchesFin[0].gameweek; //wczytujemy wcześniej wytypowaną kolejke
-        let userScores, historyScores; 
+        
+        // sprawdzanie czy pierwszy mecz już się rozpoczął
+        const nowDate = new Date();        
+        let firstMatchDate = new Date(matchesSch[0].date); //data pierwszego meczu
+        let firstMatchNotStarted = false;
+        if (nowDate < firstMatchDate) {
+            firstMatchNotStarted = true;
+        }
 
         // sprawdzenie czy user jest zalogowany, jeśli tak to pokaż typowanie
         if (req.session.user) {
@@ -153,6 +161,7 @@ class LeagueController {
             league,
             scores,
             playerObjects,
+            firstMatchNotStarted,
             matchesSch,
             matchesFin,
             userScores,
