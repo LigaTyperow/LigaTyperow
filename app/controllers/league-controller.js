@@ -195,7 +195,7 @@ class LeagueController {
             });
     
             try {                                      
-                console.log('Zapisano TYPY!');
+                // console.log('Zapisano TYPY!');
                 await score.save();  
             } catch (e) {
                 console.log('PROBLEM Z TYPOWANIEM');
@@ -282,13 +282,19 @@ class LeagueController {
         }
     }
 
+    // USUWANIE
     async deleteLeague(req, res) {
         const { name } = req.params;
+        const league = await League.findOne({ slug: name });
 
         try {      
+            // usuwanie typów przypisanych do usuwanej ligi
+            await Score.deleteMany({ league: league._id });
             await League.deleteOne({ slug: name });
             res.redirect('/ligi');    //przekierowanie na wyświetlenie lig
         } catch (e) {
+            console.log("Problem z usuwaniem ligi!");
+            console.log(e);
             //błędy nieprzewidziane
         }
     }   

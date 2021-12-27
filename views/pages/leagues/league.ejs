@@ -40,30 +40,35 @@
 
         <p><b>Właściciel ligi:</b> <%= owner.nick %></p>
 
-        <!-- Tabela z wynikami -->
-        <div class="d-flex flex-row justify-content-center">
-            <table class="table table-striped table-bordered mb-5 w-75 text-center">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Nick</th>
-                    <th scope="col">Punkty</th>
-                  </tr>
-                </thead>
-                <tbody>      
-                    <!-- Tabela z posortowanymi graczami od najlepszego -->
-                    <% for(const [index, playerObj] of playerObjects.entries()){ %>
-                        <tr>
-                            <th scope="row"><%= index + 1 %></th>
-                            <td><%= playerObj.playerNick %></td>    
-                            <td>
-                                <%= playerObj.playerAllPoints %> (<b class="text-success">+<%= playerObj.playerGWpoints %></b>)
-                            </td>   
-                        </tr>
-                    <% }; %>
-                </tbody>
-              </table>
-        </div>        
+        <!-- Sprawdzenie czy w lidze są gracze -->
+        <% if (playerObjects.length > 0) { %>
+            <!-- Tabela z wynikami -->
+            <div class="d-flex flex-row justify-content-center">
+                <table class="table table-striped table-bordered mb-5 w-75 text-center">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nick</th>
+                        <th scope="col">Punkty</th>
+                      </tr>
+                    </thead>
+                    <tbody>      
+                        <!-- Tabela z posortowanymi graczami od najlepszego -->
+                        <% for(const [index, playerObj] of playerObjects.entries()){ %>
+                            <tr>
+                                <th scope="row"><%= index + 1 %></th>
+                                <td><%= playerObj.playerNick %></td>    
+                                <td>
+                                    <%= playerObj.playerAllPoints %> (<b class="text-success">+<%= playerObj.playerGWpoints %></b>)
+                                </td>   
+                            </tr>
+                        <% }; %>
+                    </tbody>
+                  </table>
+            </div>    
+        <% } else { %>
+            <!-- w lidze nie ma graczy do pokazania rankingu -->
+        <% } %>
 
         <!-- Sprawdzamy czy user jest zalogowany -->
         <% if (user) { %> 
