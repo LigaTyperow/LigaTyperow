@@ -1,17 +1,16 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">Liga typerów</a>
+    <!-- Logo/Home -->
+    <a class="navbar-brand" href="/"><img class="logo" src="/img/logo-black-transparent.png" alt="Logo"></a>
+    
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
       aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
+      <ul class="navbar-nav ms-3">        
           <!-- Jeśli url to '/' to zwróć klasę active niżej jest skrócony if: (jeśli true && operacja) -->
-          <!-- Dzięki temu jak jesteśmy na głównej to napis jest podświetlony -->
-          <a class="nav-link <%- url === '/' && 'active' %>" aria-current="page" href="/">Home</a>
-        </li>
+          <!-- Dzięki temu jak jesteśmy na głównej to napis jest podświetlony -->          
         <li>
           <div class="nav-item">
             <a class="nav-link <%- url === '/statystyki' && 'active' %>" href="/statystyki">Statystyki</a>

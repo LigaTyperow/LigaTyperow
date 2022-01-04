@@ -199,7 +199,7 @@ async function loadData() {
         //     getData(leagueObj.leagueCode, leagueObj.currentMatchday)
         // })
     await ifDataExist()
-    setTimeout(() => { addPoints() }, 10000);
+    setTimeout(() => { addPoints() }, 5000);
 }
 
 loadData()

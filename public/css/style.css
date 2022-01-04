@@ -11,6 +11,12 @@ body {
 	/* color: white; */
 }
 
+/* NAVBAR */
+.logo {
+	height: 55px;
+	/* width: 80px; */
+}
+
 .scoreBoard {
 	margin-top: 2rem;
 	display: flex;
