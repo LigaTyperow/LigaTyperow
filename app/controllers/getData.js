@@ -202,4 +202,4 @@ async function loadData() {
     setTimeout(() => { addPoints() }, 5000);
 }
 
-loadData()
+// loadData()
