@@ -117,8 +117,13 @@ footer {
 
 footer a {
 	text-decoration: none;
-    color: blue;
+    color: rgb(168, 228, 252);
     margin-left: 1rem;
+	transition: .3s;
+}
+
+footer a:hover {
+	color: white;
 }
 
 footer p{
@@ -236,12 +241,22 @@ footer p{
 		margin-right: 0.5rem;
 	}
 
-	.table>:not(caption)>*>*{
+	.table>:not(caption)>*>* {
 		padding: 0;
 	}
 
-	footer{
+	footer {
 		font-size: 10px;
+	}
+
+	h2 {
+		font-size: 5px!important;
 	}
 }
 
+@media only screen and (max-width: 576px) {
+	.card_mp img {
+		max-height: 90px;
+		max-width: 100%;
+	}
+}
