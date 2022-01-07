@@ -96,8 +96,7 @@ class LeagueController {
             
             //Jeśli istnieją wytypowane wyniki to zmień header h3
             if (userScores.length > 0) {
-                resultsHeader = 'Twoje typy';            
-                gameweekHeader = userScores[0].gameweek;            
+                resultsHeader = 'Twoje typy';                     
             }       
             
             //wczytujemy wytypowaną kolejke wcześniejszą, aby pokazać jakie mecze zostały trafione                      

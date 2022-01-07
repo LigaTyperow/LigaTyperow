@@ -213,6 +213,7 @@ footer p{
 .teamNames{
 	margin-left: 1rem;
 	color: #198754;
+	font-weight: bold;
 }
 
 .matchDates{
@@ -220,8 +221,8 @@ footer p{
 }
 
 .list-group-item-dark {
-	color: white;
-	background-color: #212529;
+	color: rgb(0, 0, 0);
+	background-color: #ffffff;
 }
 
 @media only screen and (max-width: 700px) {

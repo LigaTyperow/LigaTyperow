@@ -129,7 +129,8 @@
                         <% }; %>
 
                         <!-- Sprawdzenie czy pierwszy mecz już się rozpoczął -->
-                        <% if (firstMatchNotStarted) { %>
+                        <!-- firstMatchNotStarted - normalnie powinień byc taki warunek -->
+                        <% if (true) { %>
                             <button class="btn btn-success">Wytypuj</button>    
                         <% } else { %>   
                             <div class="alert alert-danger mt-3 text-center">
@@ -137,7 +138,7 @@
                             </div>
                         <% } %>    
 
-                        </form>
+                    </form>
                 <% } else { %>
                     <% let date, month, day, hours, mins; %>
                     <div class="text-center pb-5">
@@ -227,7 +228,7 @@
                                            (historyScore.scoreAway === sameMatch?.scoreAwayTeam)) { %>
                                         <!-- prawidłowo wytypowany wynik będzie zielony -->
                                         <b class="text-white bg-success rounded-pill p-2"
-                                           data-bs-toggle="tooltip" data-bs-placement="right" title="Wynik trafiony!">
+                                           data-bs-toggle="tooltip" data-bs-placement="right" title="Wynik trafiony! +3pkt">
                                             <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
                                         </b>
                                     <% } else if (
@@ -236,11 +237,14 @@
                                         (historyScore.scoreHome === historyScore.scoreAway && sameMatch?.scoreHomeTeam === sameMatch?.scoreAwayTeam)) { %>
                                             <!-- prawidłowo wytypowany rezultat będzie jaśniej zielony -->
                                             <b class="text-white rounded-pill p-2" style="background-color: #66ff66;"
-                                           data-bs-toggle="tooltip" data-bs-placement="right" title="Rezultat trafiony!">
+                                           data-bs-toggle="tooltip" data-bs-placement="right" 
+                                           title="Rezultat trafiony! +1pkt">
                                             <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
                                         </b>
                                     <% } else { %>
-                                        <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
+                                        <b class="p-2" data-bs-toggle="tooltip" data-bs-placement="right" title="Wynik nietrafiony!">
+                                            <%= sameMatch?.scoreHomeTeam %> : <%= sameMatch?.scoreAwayTeam %>
+                                        </b>
                                     <% } %>
 
                                 </div>        
@@ -249,6 +253,8 @@
                     </div>
                 <% } %>
             <% } %>     
+        <% } else { %> 
+            <h5 class="text-center">Zaloguj się, aby wytypować wyniki i dołączyć do zabawy!</h5>
         <% } %> 
     <% } else { %>
         <h1>Nie ma takiej ligi!</h1>
