@@ -1,6 +1,7 @@
 <div class="container">
     <% if (name) { %>
-        <h1>Nazwa ligi: <%= name %></h1> <!-- Użycie zmiennej przekazanej w kontrolerze -->
+        <h1 class="text-center">Nazwa ligi: <%= name %></h1> <!-- Użycie zmiennej przekazanej w kontrolerze -->
+        <hr class="w-50 ms-auto me-auto">
         <p><b>Opis:</b> <%= description %></p>
         <p><b>Wybrana liga:</b> <%= selectedLeague %></p>
         
@@ -76,6 +77,7 @@
             <!-- Sprawdzamy czy user należy do ligi, jeśli tak to może wytypować wyniki -->
             <% if (exist) { %> 
                 <div class="text-center pb-3">
+                    <hr>
                     <h3><%= resultsHeader %></h3>
                     <h6>Kolejka <%= gameweekHeader %></h6>
                 </div>
@@ -180,6 +182,7 @@
                 <!-- Sprawdzamy czy jest wytypowana kolejka wcześniejsza, aby pokazać jakie mecze zostały trafione -->
                 <% if (historyScores.length > 0) { %>
                     <div class="text-center pb-3">
+                        <hr>
                         <h3>Wcześniejsze typy</h3>
                         <h6>Kolejka <%= parseInt(gameweekHeader) - 1 %></h6>
                     </div>

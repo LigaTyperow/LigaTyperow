@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="card card-body">
+    <div class="card card-body border-secondary bg-light mb-5">
         <h1 class="text-center">Lista lig:</h1>
 
     <% if (user) { %>
@@ -11,15 +11,15 @@
         <%- include('partials/search') %>
 
         <div class="row">
-            <div class="col-3">
+            <div class="col-12 col-md-3 mb-5">
                 <%- include('partials/filters') %>
             </div>
-            <div class="col-9">
+            <div class="col-12 col-md-9">
                 <!-- Wylistowanie istniejących lig -->
                 <% leagues.forEach(league => { %>
                 <!-- Zmienna exist pomaga ustalić czy user należy do danej ligi -->
                 <% let exist=false %>
-                <div class="card bg-light mb-3">
+                <div class="card text-black border-secondary mb-3">
                     <div class="card-body">
                         <p class="h3 mb-3"><%= league.name %></p>
 

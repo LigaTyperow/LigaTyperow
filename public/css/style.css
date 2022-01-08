@@ -18,69 +18,20 @@ body {
 /* NAVBAR */
 .logo {
 	height: 55px;
-	/* width: 80px; */
 }
 
-/* slider */
-.main-slider {
-	text-align: center;
-	margin-top: 10px;
-	margin-bottom: 10px;
-	background: url(/img/pitch.jpg);
-	background-position: center;
-}
-
-.text-slider1 {
-	position: absolute;
+/* homepage-bg */
+.homepage-bg {
+	position: relative;
+    height: 500px;
 	width: 100%;
-	top: 50%;
-	left: 50%;
-	margin-top: 30%;
-	transform: translate(-50%, -50%);
-	text-align: center;
-	text-shadow: 10px 10px 20px rgb(0, 0, 0);
-	bottom: 20px;
-	color: white;
-	z-index: 1;
+	background: url(/img/homepage-bg1920x1280.png);
+	background-size: 100% 140%;	
+    background-repeat: no-repeat;
+    background-position: center;
+    border-bottom: 1px solid white;
+    /* z-index: -1; */	
 }
-
-.text-slider2 {
-	position: absolute;
-	width: 100%;
-	top: 50%;
-	left: 50%;
-	margin-top: 20%;
-	transform: translate(-50%, -50%);
-	text-align: center;
-	text-shadow: 10px 10px 20px rgb(0, 0, 0);
-	bottom: 20px;
-	color: rgb(255, 255, 255);
-	z-index: 1;
-}
-.back {
-	background-color: rgba(0, 0, 0, 0.4);
-	background-position-y: 50%;
-}
-.b-h {
-	height: 500px;
-}
-
-/* animacja strzałki */
-.arrow {
-	border-radius: 70%;
-	transition: background-color 0.5s;
-}
-
-.arrow:hover {
-	background-color: rgba(0, 0, 0, 0.5);
-}
-
-.li-1 {
-	display: inline-block;
-	text-align: left;
-}
-
-/* slider */
 
 /* oferta lig */
 #leagues h1 {
@@ -91,7 +42,14 @@ body {
 	box-shadow: 8px 8px 24px 0px rgb(66 68 90);
 	color: white;
 	background-color: #212529;
+	transition: .6s;
 }
+
+.card_mp:hover {
+	background-color: #333!important;
+	transform: scale(1.1);
+}
+
 .card_mp img {
 	max-height: 100%;
 	max-width: 150px;
@@ -251,6 +209,16 @@ footer p{
 
 	h2 {
 		font-size: 5px!important;
+	}
+
+	.homepage-bg {	
+		height: 350px;	
+		background: url(/img/homepage-bg640x426.jpg);	
+		/* background-size: cover;	 */
+		background-size: 105% 120%;	
+		background-repeat: no-repeat;
+		background-position: center;
+		border-bottom: 1px solid white;
 	}
 }
 
