@@ -188,6 +188,81 @@ footer p{
 	background-color: #ffffff;
 }
 
+/* Custom button styles */
+.button {
+  align-items: center;
+  appearance: none;
+  background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
+  border: 0;
+  border-radius: 6px;
+  box-shadow: rgba(45, 35, 66, .4) 0 2px 4px,rgba(45, 35, 66, .3) 0 7px 13px -3px,rgba(58, 65, 111, .5) 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  height: 48px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+  font-size: 16px;
+}
+
+.btn-success{
+	background-image: radial-gradient(100% 100% at 100% 0, #7dd390 0, #0c8320 100%);
+}
+
+.btn-danger{
+	background-image: radial-gradient(100% 100% at 100% 0, #ff0c00 0, #bf1414 100%);
+}
+
+.btn-warning{
+	background-image:radial-gradient(100% 100% at 100% 0, #fbff00 0, #e0a800 100%);
+	color: black;
+}
+
+.btn-dark{
+	background-image: radial-gradient(100% 100% at 100% 0, #858585 0, #070602 100%);
+}
+
+.button:hover {
+  box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #3c4fe0 0 -3px 0 inset; 
+  transform: translateY(-2px);
+}
+
+.btn-danger:hover{
+	box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #911302 0 -3px 0 inset; 
+}
+
+.btn-success:hover{
+	box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #075714 0 -3px 0 inset; 
+}
+
+.btn-warning:hover{
+	box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #6e6d04 0 -3px 0 inset; 
+}
+
+.btn-dark:hover{
+	box-shadow: rgba(45, 35, 66, .4) 0 4px 8px, rgba(45, 35, 66, .3) 0 7px 13px -3px, #0303037c 0 -3px 0 inset; 
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+	background-image: radial-gradient(100% 100% at 100% 0, #5adaff 0, #5468ff 100%);
+}
+
 @media only screen and (max-width: 700px) {
 	.finishedMatchesList,
 	.UpcomingMatchesList,

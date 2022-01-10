@@ -3,7 +3,7 @@
         <h1 class="text-center">Lista lig:</h1>
 
     <% if (user) { %>
-    <a href="/zalogowany/ligi/dodaj" class="btn btn-success mb-3">Dodaj nową ligę!</a>
+    <a href="/zalogowany/ligi/dodaj" class="button btn-success mb-3">Dodaj nową ligę!</a>
     <% } %>
 
     <!-- Aby sort nie gryzł się z query w slug to trzeba to zrobić w jednym formularzu -->
@@ -54,7 +54,7 @@
                             <% }); %>
                         </p>
                         
-                        <a href="/ligi/<%= league.slug %>" class="btn btn-primary">Zobacz</a>
+                        <a href="/ligi/<%= league.slug %>" class="button btn-primary">Zobacz</a>
                         <!-- Jeśli user jest zalogowany -->
                         <% if (user) { %>
 
@@ -66,19 +66,19 @@
 
                                     <!-- Warunek czy w lidze jest jeszcze miejsce -->
                                     <% if (league.playersCount > league.players.length) { %> 
-                                        <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="btn btn-success">Dołącz</a>
+                                        <a href="/zalogowany/ligi/<%= league.slug %>/dolacz" class="button btn-success">Dołącz</a>
                                     <% } %>
                                 <% } %>
                             <% } else { %>
                                 <!-- Jeśli liga jest prywatna to user może opuścić ligę na bieżącej stronie z ligami -->
-                                <a href="/zalogowany/ligi/<%= league.slug %>/opusc" class="btn btn-danger">Opuść</a>
+                                <a href="/zalogowany/ligi/<%= league.slug %>/opusc" class="button btn-danger">Opuść</a>
                             <% } %>
                             
                             <!-- Sprawdzamy czy user jest właścicielem ligi -->
                             <% if (league.owner.nick == user.nick) { %>
-                                <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="btn btn-warning">Edytuj</a>
+                                <a href="/zalogowany/ligi/<%= league.slug %>/edytuj" class="button btn-warning">Edytuj</a>
                                 <a href="/zalogowany/ligi/<%= league.slug %>/usun"
-                                    onclick="return confirm('Czy jesteś pewien?')" class="btn btn-outline-danger">Usuń</a>
+                                    onclick="return confirm('Czy jesteś pewien?')" class="button btn-dark">Usuń</a>
                             <% } %>
                         <% } %>
                     </div>
